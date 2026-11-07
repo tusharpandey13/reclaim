@@ -1,0 +1,103 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "reclaim:status-invariants-v1",
+ "title": "Real-data invariants",
+ "description": "status.json's optional `invariants`, written by finance/invariants.py after the build. Counts, basis points, and account masks or sender headers only. Consumers ignore unknown fields.",
+ "type": "object",
+ "required": [
+  "checks",
+  "error",
+  "state",
+  "version"
+ ],
+ "properties": {
+  "version": {
+   "const": 1
+  },
+  "state": {
+   "enum": [
+    "ok",
+    "warn",
+    "failed"
+   ],
+   "description": "failed: the checks themselves stopped. The build's own state is unaffected."
+  },
+  "error": {
+   "type": [
+    "string",
+    "null"
+   ],
+   "description": "Exception type name when failed."
+  },
+  "checks": {
+   "type": "array",
+   "items": {
+    "$ref": "#/$defs/Check"
+   }
+  }
+ },
+ "$defs": {
+  "Check": {
+   "type": "object",
+   "required": [
+    "bp",
+    "by_account",
+    "count",
+    "id",
+    "level",
+    "ok",
+    "proposed_level",
+    "reason"
+   ],
+   "properties": {
+    "id": {
+     "type": "string"
+    },
+    "level": {
+     "enum": [
+      "warn"
+     ],
+     "description": "What it does today. Always warn."
+    },
+    "proposed_level": {
+     "enum": [
+      "block",
+      "warn"
+     ],
+     "description": "Where it should end up: docs/design/testing.md."
+    },
+    "ok": {
+     "type": "boolean"
+    },
+    "count": {
+     "type": "integer"
+    },
+    "bp": {
+     "type": [
+      "integer",
+      "null"
+     ],
+     "description": "A share of rupees, in basis points, where the check measures one."
+    },
+    "by_account": {
+     "anyOf": [
+      {
+       "type": "object"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "description": "Ledger account or sender header -> count."
+    },
+    "reason": {
+     "type": [
+      "string",
+      "null"
+     ],
+     "description": "Fixed text, when not ok."
+    }
+   }
+  }
+ }
+}

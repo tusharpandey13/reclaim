@@ -1,0 +1,5453 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reclaim:snapshot-v2",
+  "title": "Snapshot",
+  "description": "Reclaim finance snapshot v2, for the frozen design. Published beside v1. Definitions, including Likely left, are in snapshot-v2.md. Consumers ignore unknown fields. Anything real data cannot supply is null, with a reason in `absent`.",
+  "type": "object",
+  "required": [
+    "absent",
+    "bills",
+    "forecast",
+    "health",
+    "invest",
+    "meta",
+    "payees",
+    "plan_inputs",
+    "position",
+    "reports",
+    "spend"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "account",
+        "as_of",
+        "built_at",
+        "code_revision",
+        "newest_record_at",
+        "rules_version",
+        "sample",
+        "snapshot_version",
+        "stale_after_hours",
+        "statements_from"
+      ],
+      "properties": {
+        "snapshot_version": {
+          "const": 2
+        },
+        "rules_version": {
+          "type": "integer"
+        },
+        "code_revision": {
+          "type": "string"
+        },
+        "sample": {
+          "type": "boolean"
+        },
+        "as_of": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "newest_record_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "statements_from": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "account": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stale_after_hours": {
+          "type": "integer",
+          "description": "Numbers are stale when now minus manifest.generated_at is over this. See snapshot-v2.md."
+        },
+        "built_at": {
+          "const": "manifest.generated_at",
+          "description": "The build time is not in here, so a rebuild stays byte-identical. Read it from the manifest."
+        }
+      }
+    },
+    "position": {
+      "$ref": "#/$defs/Position"
+    },
+    "forecast": {
+      "$ref": "#/$defs/Forecast"
+    },
+    "spend": {
+      "$ref": "#/$defs/Spend"
+    },
+    "payees": {
+      "$ref": "#/$defs/Payees"
+    },
+    "bills": {
+      "$ref": "#/$defs/Bills"
+    },
+    "invest": {
+      "$ref": "#/$defs/Invest"
+    },
+    "plan_inputs": {
+      "$ref": "#/$defs/PlanInputs"
+    },
+    "health": {
+      "$ref": "#/$defs/Health"
+    },
+    "reports": {
+      "$ref": "#/$defs/Reports"
+    },
+    "absent": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Absent"
+      }
+    }
+  },
+  "$defs": {
+    "IsoDate": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
+    "IsoMonth": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}$"
+    },
+    "Figure": {
+      "type": "object",
+      "description": "One number and everything needed to trust it. `value` is always an integer in `unit`: paise, never a float. The UI only chooses colours from `status`.",
+      "required": [
+        "value",
+        "unit",
+        "source",
+        "as_of",
+        "confidence",
+        "status",
+        "rule",
+        "basis"
+      ],
+      "properties": {
+        "value": {
+          "type": "integer"
+        },
+        "unit": {
+          "enum": [
+            "paise",
+            "usd_cents",
+            "micro_inr_per_usd",
+            "count",
+            "basis_points"
+          ]
+        },
+        "source": {
+          "enum": [
+            "statement",
+            "sms",
+            "mixed",
+            "splitwise",
+            "price",
+            "entered",
+            "forecast"
+          ]
+        },
+        "as_of": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "confidence": {
+          "enum": [
+            "statement",
+            "provisional",
+            "estimate",
+            "entered"
+          ]
+        },
+        "status": {
+          "enum": [
+            "bad",
+            "normal",
+            "good",
+            "none"
+          ]
+        },
+        "rule": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Id in the rules file that set `status`."
+        },
+        "basis": {
+          "type": "string",
+          "description": "How it was worked out, in words. Always fixed text, never payload text."
+        },
+        "range": {
+          "type": "object",
+          "required": [
+            "high",
+            "low"
+          ],
+          "properties": {
+            "low": {
+              "type": "integer"
+            },
+            "high": {
+              "type": "integer"
+            }
+          },
+          "description": "Optional low and high, in `unit`."
+        },
+        "spread": {
+          "type": "object",
+          "required": [
+            "hit_rate_bp",
+            "median",
+            "n",
+            "variance"
+          ],
+          "properties": {
+            "median": {
+              "type": "integer"
+            },
+            "variance": {
+              "type": "integer"
+            },
+            "n": {
+              "type": "integer"
+            },
+            "hit_rate_bp": {
+              "type": "integer"
+            }
+          },
+          "description": "Optional median and plus-or-minus variance, in `unit`, with the months backtested and how often the real month end landed inside, in basis points."
+        },
+        "usual_low": {
+          "type": "integer",
+          "description": "Where a usual month lands, low end, in `unit`. The app prints this range, never a ±. Spending never goes below 0; a balance may, which means overdrawn. Optional."
+        },
+        "usual_high": {
+          "type": "integer",
+          "description": "The range's high end. See `usual_low`."
+        }
+      }
+    },
+    "Item": {
+      "type": "object",
+      "required": [
+        "account",
+        "account_kind",
+        "amount",
+        "brand",
+        "category",
+        "date",
+        "due_date",
+        "group",
+        "key",
+        "kind",
+        "merchant_id",
+        "name",
+        "time"
+      ],
+      "properties": {
+        "key": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Source key of a payment that happened; null for one expected."
+        },
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "kind": {
+          "enum": [
+            "spend",
+            "bill",
+            "sip",
+            "card_bill",
+            "card_bill_estimate"
+          ]
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The day it is really due. `date` is when it can still leave, so an overdue card bill keeps its lateness here. Null on a spend."
+        },
+        "account": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account_kind": {
+          "enum": [
+            "bank",
+            "card",
+            "other",
+            null
+          ]
+        },
+        "time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "IST clock time where an SMS gave one. A statement alone gives a date."
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A group from the ledger taxonomy with its detail: Food or Food:Groceries. Null only where no ledger account says, such as a plan."
+        },
+        "merchant_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "may_be_paid": {
+          "type": "integer",
+          "description": "A bank debit near this bill's balance, not proven to be a card payment. It clears nothing. Absent when none."
+        },
+        "unmatched_off": {
+          "type": "integer",
+          "description": "bills.upcoming only: paise of a card payment that named no card, set against this bill. amount is net of it. Absent when none."
+        },
+        "spend_kind": {
+          "type": "string",
+          "enum": [
+            "fixed",
+            "variable",
+            "one_off"
+          ],
+          "description": "Fixed cost, variable spending or a large one-off, set on the server. snapshot-v2.md, \"Fixed, variable, one-off\". Absent on a row from a build before this field."
+        },
+        "spend_kind_reason": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "housing",
+            "fixed_account",
+            "recurs",
+            "varies",
+            "not_regular",
+            "thin_history",
+            "large",
+            "one_off_account"
+          ],
+          "description": "Why, as a code. spend.allocation.reasons has the words."
+        },
+        "spend_kind_source": {
+          "type": "string",
+          "enum": [
+            "rule",
+            "owner"
+          ],
+          "description": "rule: worked out. owner: a correction with spend_kind said so."
+        },
+        "purchased": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "spend.days[].items[] only: what a receipt or order lists for this payment. Metadata: it changes no amount. Absent when nothing holds it."
+        }
+      }
+    },
+    "Gate": {
+      "type": "object",
+      "required": [
+        "count",
+        "id",
+        "level",
+        "ok",
+        "reason"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "block",
+            "warn"
+          ]
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "One plain line when not ok. Fixed text and counts only."
+        }
+      }
+    },
+    "CashParts": {
+      "type": "object",
+      "required": [
+        "since",
+        "statement"
+      ],
+      "properties": {
+        "statement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "since": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "AccountLine": {
+      "type": "object",
+      "required": [
+        "balance",
+        "brand",
+        "name",
+        "statement_to"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "balance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statement_to": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        }
+      }
+    },
+    "OwedCard": {
+      "type": "object",
+      "required": [
+        "brand",
+        "card",
+        "due_date",
+        "minimum_due",
+        "since",
+        "statement"
+      ],
+      "properties": {
+        "card": {
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "minimum_due": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "since": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "paid_not_posted": {
+          "$ref": "#/$defs/Figure",
+          "description": "A bank debit that cleared this card's open bill, whose card side has not arrived. Absent when none."
+        },
+        "paid_inferred": {
+          "type": "boolean",
+          "description": "True when that clearing rests on card wording or rail plus a near balance, not an exact amount. Absent otherwise."
+        },
+        "may_be_paid": {
+          "type": "integer",
+          "description": "As Item.may_be_paid."
+        },
+        "label": {
+          "type": "string",
+          "description": "A fuller name for the card than `card`, when its statement prints fewer digits than its messages do. Absent otherwise."
+        },
+        "owed_split": {
+          "type": "object",
+          "required": [
+            "billed",
+            "not_billed"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "billed": {
+              "type": "integer",
+              "description": "Paise a statement has billed, less payments since. Negative when overpaid."
+            },
+            "not_billed": {
+              "type": "integer",
+              "description": "Paise charged since the statement and still owed: no bill says so yet."
+            }
+          },
+          "description": "The row's balance, split. billed + not_billed = statement + since - paid_not_posted."
+        },
+        "since_estimate": {
+          "type": "object",
+          "required": [
+            "capture_bp",
+            "rows",
+            "low",
+            "high"
+          ],
+          "properties": {
+            "capture_bp": {
+              "type": "integer"
+            },
+            "rows": {
+              "type": "integer"
+            },
+            "low": {
+              "type": "integer"
+            },
+            "high": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "Position": {
+      "type": "object",
+      "required": [
+        "accounts",
+        "cash",
+        "cash_parts",
+        "liquid",
+        "month_ends",
+        "month_so_far",
+        "net_worth",
+        "owed",
+        "owed_total"
+      ],
+      "properties": {
+        "cash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash_parts": {
+          "$ref": "#/$defs/CashParts"
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AccountLine"
+          }
+        },
+        "owed_total": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "owed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OwedCard"
+          }
+        },
+        "net_worth": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "month_ends": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MonthEnd"
+          },
+          "description": "Up to 12 finished months, oldest first. Under 12: nothing is green."
+        },
+        "month_so_far": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MonthSoFar"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "liquid": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Cash plus stocks and funds you could sell within a week."
+        },
+        "before_salary_ends": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SalaryEve"
+          },
+          "description": "Up to 12 real balances, each the day before a salary landed, oldest first. The bar for `before_salary`: no salary in either. Optional, as `before_salary` is."
+        },
+        "payment_unmatched": {
+          "$ref": "#/$defs/PaymentUnmatched",
+          "description": "`owed_total` is each card's statement + since - paid_not_posted, less this."
+        },
+        "owed_split": {
+          "type": "object",
+          "required": [
+            "billed",
+            "not_billed"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "billed": {
+              "type": "integer",
+              "description": "Paise a statement has billed, less payments since. Negative when overpaid."
+            },
+            "not_billed": {
+              "type": "integer",
+              "description": "Paise charged since the statement and still owed: no bill says so yet."
+            }
+          },
+          "description": "owed_total, split. billed + not_billed = owed_total.value. Bills and the Line count billed; Owe counts both."
+        },
+        "owed_range": {
+          "type": "object",
+          "required": [
+            "low",
+            "high"
+          ],
+          "properties": {
+            "low": {
+              "type": "integer"
+            },
+            "high": {
+              "type": "integer"
+            }
+          }
+        }
+      },
+      "description": "What do I have and owe, right now?"
+    },
+    "PlanLine": {
+      "type": "object",
+      "required": [
+        "amount",
+        "date",
+        "id",
+        "name"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "name": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The saved expense, in `plan_inputs.expenses`. Null on a line from the older plans file that is not one."
+        }
+      }
+    },
+    "WithPlans": {
+      "type": "object",
+      "required": [
+        "figure",
+        "label",
+        "plans",
+        "status"
+      ],
+      "properties": {
+        "label": {
+          "const": "projection"
+        },
+        "figure": {
+          "$ref": "#/$defs/Figure"
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanLine"
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CashStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Forecast": {
+      "type": "object",
+      "required": [
+        "card_building",
+        "cash",
+        "definition",
+        "due",
+        "due_items",
+        "likely_left",
+        "month_end",
+        "months_of_history",
+        "next_salary",
+        "pay_included",
+        "state",
+        "status",
+        "usual_spend",
+        "usual_spend_past",
+        "with_plans"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "ok",
+            "not_enough_history"
+          ]
+        },
+        "definition": {
+          "const": "likely-left-v1",
+          "description": "See snapshot-v2.md."
+        },
+        "month_end": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "months_of_history": {
+          "type": "integer"
+        },
+        "likely_left": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The hero. The expected bank balance at the close of `month_end`: cash + pay_included - due - usual_spend, rounded to the rule's step. A salary expected on or after `month_end` is NOT in it. Null when history is too short: say so, show no number."
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CashStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "with_plans": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WithPlans"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "pay_included": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PayIncluded"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "A salary expected after today and before `month_end`, which is inside `likely_left`. Null when none is."
+        },
+        "next_salary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryLine"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The first salary NOT inside `likely_left`: the Salary row after it. Its date is never before `month_end`. Null without a regular salary."
+        },
+        "due": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "usual_spend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usual_spend_past": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "card_building": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "before_salary": {
+          "$ref": "#/$defs/BeforeSalary",
+          "description": "The hero since 2026-11-03: what should be in the bank on the day before the next salary. Optional, so a snapshot from before it stays valid. See snapshot-v2.md."
+        },
+        "payment_unmatched": {
+          "$ref": "#/$defs/PaymentUnmatched",
+          "description": "`due` is due_items less this."
+        },
+        "shortfall": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Shortfall"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "silent_cards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SilentCard"
+          }
+        },
+        "likely_bills": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LikelyBills"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Bills after the next salary. Apart from Likely left, which holds none of them. Optional, so a snapshot from before it stays valid."
+        }
+      },
+      "description": "What will be left at month end? v1's `base`, `pay` and `pay_date` are gone, because `base` could include a salary landing on the last day."
+    },
+    "SpendBaseline": {
+      "type": "object",
+      "required": [
+        "m3",
+        "m6",
+        "months"
+      ],
+      "properties": {
+        "m3": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "m6": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "months": {
+          "type": "integer"
+        }
+      }
+    },
+    "GroupLine": {
+      "type": "object",
+      "required": [
+        "name",
+        "spent",
+        "usual"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "spent": {
+          "$ref": "#/$defs/Figure"
+        },
+        "usual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UsualBand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Uncategorized": {
+      "type": "object",
+      "required": [
+        "card_unknown",
+        "needs_review",
+        "small_payments"
+      ],
+      "properties": {
+        "needs_review": {
+          "$ref": "#/$defs/Figure"
+        },
+        "card_unknown": {
+          "$ref": "#/$defs/Figure"
+        },
+        "small_payments": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "HeatDay": {
+      "type": "object",
+      "required": [
+        "day",
+        "invest",
+        "items",
+        "spend",
+        "state"
+      ],
+      "properties": {
+        "day": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "spend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Null only when `state` is no_data."
+        },
+        "invest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "state": {
+          "enum": [
+            "spend",
+            "no_spend",
+            "no_data"
+          ],
+          "description": "no_data: outside what the data covers. It must never read as no spending."
+        }
+      }
+    },
+    "MonthLine": {
+      "type": "object",
+      "required": [
+        "complete",
+        "month",
+        "spent"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "spent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "complete": {
+          "type": "boolean",
+          "description": "The whole month is inside the data and before the as-of month. Up to the last 12 such months. Null `spent`: before the data begins."
+        }
+      }
+    },
+    "Spend": {
+      "type": "object",
+      "required": [
+        "comparable",
+        "data_through",
+        "day",
+        "days",
+        "first_day",
+        "groups",
+        "month",
+        "month_end_forecast",
+        "months",
+        "oneoffs",
+        "shared_adjustment",
+        "spent",
+        "uncategorized",
+        "usual"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "day": {
+          "type": "integer"
+        },
+        "spent": {
+          "$ref": "#/$defs/Figure"
+        },
+        "comparable": {
+          "$ref": "#/$defs/Figure"
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/GroupLine"
+          }
+        },
+        "oneoffs": {
+          "$ref": "#/$defs/Figure"
+        },
+        "uncategorized": {
+          "$ref": "#/$defs/Uncategorized"
+        },
+        "shared_adjustment": {
+          "$ref": "#/$defs/Figure"
+        },
+        "days": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeatDay"
+          }
+        },
+        "months": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MonthLine"
+          }
+        },
+        "first_day": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The first day anything is known about."
+        },
+        "data_through": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The last day anything is known about, up to as_of."
+        },
+        "usual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UsualBand"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "month_end_forecast": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "All spending by month end: spent so far plus the median of the same days left."
+        },
+        "rolling": {
+          "$ref": "#/$defs/Rolling"
+        },
+        "rent_attribution": {
+          "type": "object",
+          "required": [
+            "moved_in",
+            "moved_out"
+          ],
+          "properties": {
+            "moved_in": {
+              "type": "integer"
+            },
+            "moved_out": {
+              "type": "integer"
+            }
+          }
+        },
+        "allocation": {
+          "$ref": "#/$defs/SpendAllocation"
+        },
+        "month_curves": {
+          "$ref": "#/$defs/MonthCurves"
+        }
+      },
+      "description": "How much am I spending, against my usual by this day? Baselines exclude one-offs, Uncategorized and Splitwise."
+    },
+    "Suggestion": {
+      "type": "object",
+      "description": "A deterministic guess the owner can accept in one tap. It never moves money until confirmed. `reason` is fixed text, never payload text.",
+      "required": [
+        "commodity",
+        "group",
+        "name",
+        "reason",
+        "reason_code",
+        "treatment"
+      ],
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A correction's `group`: a top group, optionally with a detail, such as Food:Groceries."
+        },
+        "treatment": {
+          "type": "string"
+        },
+        "commodity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reason_code": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "ReviewItem": {
+      "type": "object",
+      "required": [
+        "brand",
+        "category",
+        "count",
+        "key",
+        "latest",
+        "merchant_id",
+        "month_total",
+        "name",
+        "payments",
+        "raw",
+        "scope",
+        "suggested",
+        "suggestion",
+        "suggestions",
+        "total"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string",
+          "description": "What a correction for this names: an alias key when `scope` is similar, one payment's source key when `scope` is one."
+        },
+        "scope": {
+          "enum": [
+            "one",
+            "similar"
+          ]
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The sanitised name before cleaning, so the owner can recognise it."
+        },
+        "merchant_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The first correction's id, or the merge target's. Never derived from the name."
+        },
+        "suggestion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Suggestion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "count": {
+          "type": "integer"
+        },
+        "total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "latest": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "suggested": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A group from the ledger taxonomy with its detail: Food or Food:Groceries. Null only where no ledger account says, such as a plan."
+        },
+        "month_total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "distinct_names": {
+          "type": "integer",
+          "description": "How many different names this group's rows carry. Over 1, one correction would rename different people, so the app refuses it."
+        },
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Suggestion"
+          }
+        },
+        "payments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReviewPayment"
+          }
+        }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "required": [
+        "count",
+        "items",
+        "month_total",
+        "total"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReviewItem"
+          }
+        },
+        "month_total": {
+          "$ref": "#/$defs/Figure",
+          "description": "Unnamed money this month: the base for naming progress. `total` spans 6 months."
+        }
+      }
+    },
+    "TopPayee": {
+      "type": "object",
+      "required": [
+        "brand",
+        "category",
+        "confidence",
+        "count",
+        "group",
+        "key",
+        "merchant_id",
+        "name",
+        "raw",
+        "scope",
+        "total"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string",
+          "description": "As on ReviewItem."
+        },
+        "scope": {
+          "enum": [
+            "one",
+            "similar"
+          ]
+        },
+        "raw": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "merchant_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "owner",
+            "table",
+            "rule",
+            "suggested",
+            "none"
+          ],
+          "description": "How the name and group were decided: a correction, merchants.tsv, a rule, a suggestion waiting for the owner, or nothing yet."
+        },
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "count": {
+          "type": "integer"
+        },
+        "total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A group from the ledger taxonomy with its detail: Food or Food:Groceries. Null only where no ledger account says, such as a plan."
+        },
+        "spend_kind": {
+          "type": "string",
+          "enum": [
+            "fixed",
+            "variable",
+            "one_off"
+          ],
+          "description": "Fixed cost, variable spending or a large one-off, set on the server. snapshot-v2.md, \"Fixed, variable, one-off\". Absent on a row from a build before this field."
+        },
+        "spend_kind_reason": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "housing",
+            "fixed_account",
+            "recurs",
+            "varies",
+            "not_regular",
+            "thin_history",
+            "large",
+            "one_off_account"
+          ],
+          "description": "Why, as a code. spend.allocation.reasons has the words."
+        },
+        "spend_kind_source": {
+          "type": "string",
+          "enum": [
+            "rule",
+            "owner"
+          ],
+          "description": "rule: worked out. owner: a correction with spend_kind said so."
+        }
+      }
+    },
+    "Payees": {
+      "type": "object",
+      "required": [
+        "corrections_seq",
+        "review",
+        "top"
+      ],
+      "properties": {
+        "corrections_seq": {
+          "type": "integer",
+          "description": "Distinct correction lines this snapshot includes, revokes too. It only grows, so the app can drop pending corrections up to it."
+        },
+        "review": {
+          "$ref": "#/$defs/Review"
+        },
+        "top": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TopPayee"
+          }
+        }
+      },
+      "description": "Who am I paying, and who still needs a name?"
+    },
+    "RecurringLine": {
+      "type": "object",
+      "required": [
+        "amount",
+        "brand",
+        "category",
+        "confirmed",
+        "day",
+        "group",
+        "history",
+        "kind",
+        "months",
+        "name",
+        "price_change_bp",
+        "spread_state"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "day": {
+          "type": "integer"
+        },
+        "months": {
+          "type": "integer"
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "bill",
+            "sip"
+          ]
+        },
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A group from the ledger taxonomy with its detail: Food or Food:Groceries. Null only where no ledger account says, such as a plan."
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "spread_state": {
+          "enum": [
+            "fixed",
+            "measured",
+            "too_little_history"
+          ],
+          "description": "Fixed bills have no ±. `amount.spread` is present only when measured."
+        },
+        "price_change_bp": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Latest amount against the same month a year ago. Null with no amount a year ago."
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PriceRow"
+          }
+        }
+      }
+    },
+    "CardBill": {
+      "type": "object",
+      "description": "One live card's last statement bill and whether a payment for it shows. Matching only: no amount moves. See snapshot-v2.md, Card bill status.",
+      "required": [
+        "id",
+        "card",
+        "label",
+        "account",
+        "brand",
+        "statement_date",
+        "due",
+        "minimum_due",
+        "due_date",
+        "paid",
+        "status",
+        "paid_date",
+        "confidence",
+        "may_be_paid",
+        "payments"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+          "description": "The card's short label as a link: `#/bills/<id>`."
+        },
+        "card": {
+          "type": "string",
+          "description": "The same label as `position.owed[].card`."
+        },
+        "label": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A fuller card name, as `position.owed[].label`."
+        },
+        "account": {
+          "type": "string"
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "statement_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "due": {
+          "type": "integer",
+          "description": "Paise: the last statement's total due."
+        },
+        "minimum_due": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paid": {
+          "type": "integer",
+          "description": "Paise of payments since the statement date, the sum of `payments`. May exceed `due`."
+        },
+        "status": {
+          "enum": [
+            "paid",
+            "part_paid",
+            "unpaid",
+            "unknown",
+            "nothing_due"
+          ]
+        },
+        "paid_date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The day the bill was covered, or for part_paid the latest payment. Null otherwise."
+        },
+        "confidence": {
+          "enum": [
+            "statement",
+            "provisional",
+            "estimate"
+          ],
+          "description": "statement: a bank statement shows every payment. provisional: messages show it, or show none yet. estimate: a payment matched on nearness, or one that named no card."
+        },
+        "may_be_paid": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Paise of a bank payment close to this card's balance that is not proven to be for it. Counts nothing."
+        },
+        "payments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "amount",
+              "via"
+            ],
+            "properties": {
+              "date": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/IsoDate"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "amount": {
+                "type": "integer"
+              },
+              "via": {
+                "enum": [
+                  "card",
+                  "bank",
+                  "unnamed"
+                ],
+                "description": "card: the card's own record. bank: a bank debit named for this card. unnamed: part of a payment that named no card, set against this bill; its date is null."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Bills": {
+      "type": "object",
+      "required": [
+        "paid",
+        "paid_this_month",
+        "recurring",
+        "subscriptions_monthly",
+        "upcoming",
+        "yearly"
+      ],
+      "properties": {
+        "cards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CardBill"
+          },
+          "description": "Added 2026-11-06, additive: one row per live card with a statement. Optional, so older snapshots stay valid."
+        },
+        "upcoming": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "paid_this_month": {
+          "$ref": "#/$defs/Figure",
+          "description": "The sum of `paid`. Unlike v1, it counts card bills."
+        },
+        "recurring": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RecurringLine"
+          }
+        },
+        "subscriptions_monthly": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "paid": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PaidLine"
+          }
+        },
+        "yearly": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/YearlyBill"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "description": "What is due, and what repeats?"
+    },
+    "Assets": {
+      "type": "object",
+      "required": [
+        "fx",
+        "inr",
+        "total",
+        "usd"
+      ],
+      "properties": {
+        "inr": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fx": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "total": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Holding": {
+      "type": "object",
+      "required": [
+        "annual_return_bp",
+        "asset_class",
+        "brand",
+        "country",
+        "currency",
+        "estimated",
+        "gain",
+        "gain_pct",
+        "instrument",
+        "invested",
+        "liquid",
+        "name",
+        "platform",
+        "price_as_of",
+        "return_since",
+        "stale",
+        "units",
+        "value",
+        "value_usd"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Figure"
+        },
+        "units": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currency": {
+          "type": "string"
+        },
+        "instrument": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "platform": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gain_pct": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "price_as_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stale": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "asset_class": {
+          "enum": [
+            "fund",
+            "stock",
+            "rsu",
+            "epf",
+            "ppf",
+            "fd",
+            "gold",
+            null
+          ],
+          "description": "From the instrument id. Null when it does not say. EPF, PPF, FD and gold have no input yet."
+        },
+        "liquid": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Could be sold within a week. Null when the class is unknown."
+        },
+        "estimated": {
+          "type": "boolean",
+          "description": "Show `Est` only when true. Priced holdings are false, whatever `value.confidence` says."
+        },
+        "annual_return_bp": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "return_since": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReturnSince"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        }
+      },
+      "description": "One holding. `value` is in rupees; `value_usd` is its native value when held in dollars."
+    },
+    "Contribution": {
+      "type": "object",
+      "required": [
+        "amount",
+        "month"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "parts": {
+          "type": "array",
+          "description": "Where the month's money came from, when a source beyond the bank is connected. Additive.",
+          "items": {
+            "type": "object",
+            "required": [
+              "source",
+              "label",
+              "estimate",
+              "amount"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "source": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "estimate": {
+                "type": "boolean",
+                "description": "True when no dollar rate from around the date exists."
+              },
+              "amount": {
+                "$ref": "#/$defs/Figure"
+              }
+            }
+          }
+        },
+        "partial": {
+          "type": "boolean",
+          "description": "Some connected source doesn't cover this month, so the figure may be low. Additive."
+        }
+      }
+    },
+    "NextVest": {
+      "type": "object",
+      "required": [
+        "date",
+        "value"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "value": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "Invest": {
+      "type": "object",
+      "required": [
+        "assets",
+        "buckets",
+        "contributions",
+        "events",
+        "gain",
+        "gain_pct",
+        "gain_since",
+        "holdings",
+        "invested",
+        "movements",
+        "net_cash_in",
+        "net_cash_since",
+        "next_vest",
+        "put_in",
+        "split",
+        "targets",
+        "value_status",
+        "vests",
+        "weekly"
+      ],
+      "properties": {
+        "assets": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Assets"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "holdings": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/Holding"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "put_in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gain": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "put_in_source": {
+          "type": "object",
+          "required": [
+            "state",
+            "basis",
+            "covered_months"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "bank_transfers",
+                "connected_sources",
+                "none"
+              ],
+              "description": "bank_transfers: contributions and put_in come from the ledger. connected_sources: from the ledger and funding documents. none: nothing can say what went in."
+            },
+            "basis": {
+              "type": "string",
+              "description": "What the monthly figures can and cannot see, in plain words."
+            },
+            "covered_months": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Months every connected source covers, with this one so far if they all reach today; with only the bank, the months a statement covers. A month here with no contribution was ₹0; one outside is not known."
+            },
+            "partial_months": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Months some connected source covers or has money in, but not all: never ₹0. Additive."
+            },
+            "sources": {
+              "type": "array",
+              "description": "Each connected source and the dates it covers. Additive.",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "label",
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "from": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "to": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "description": "Where monthly put-in comes from. Additive."
+        },
+        "contributions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Contribution"
+          }
+        },
+        "next_vest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NextVest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "invested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The \"put in\" for the portfolio card: value - invested = gain. `put_in` and `net_cash_in` measure bank money and do not pair with gain."
+        },
+        "gain_pct": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "gain_since": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GainSince"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "split": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvestSplit"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "net_cash_in": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "net_cash_since": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vests": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvestVests"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "weekly": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestWeek"
+          }
+        },
+        "movements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestMovement"
+          }
+        },
+        "events": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestEvent"
+          }
+        },
+        "value_status": {
+          "$ref": "#/$defs/InvestStatus"
+        },
+        "buckets": {
+          "$ref": "#/$defs/Buckets"
+        },
+        "targets": {
+          "type": "null",
+          "description": "No source exists: see `absent`."
+        }
+      },
+      "description": "What do I hold, and what did I put in? Null until holdings exports exist: hidden, never zero."
+    },
+    "EnteredInput": {
+      "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "PlanInputs": {
+      "type": "object",
+      "required": [
+        "cushions",
+        "entered",
+        "expenses",
+        "plans",
+        "returns",
+        "settings",
+        "start",
+        "store",
+        "surplus",
+        "year"
+      ],
+      "properties": {
+        "start": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "surplus": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "returns": {
+          "anyOf": [
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/EnteredInput"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "entered": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EnteredInput"
+          }
+        },
+        "plans": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanLine"
+          }
+        },
+        "cushions": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Cushions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "settings": {
+          "$ref": "#/$defs/PlanSettings"
+        },
+        "expenses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Expense"
+          }
+        },
+        "store": {
+          "$ref": "#/$defs/PlanStore"
+        },
+        "year": {
+          "$ref": "#/$defs/PlanYear"
+        }
+      },
+      "description": "The inputs a client-side plan needs. Plans are entered and only ever change projections."
+    },
+    "StatementLine": {
+      "type": "object",
+      "required": [
+        "account",
+        "covered_to"
+      ],
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "covered_to": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Health": {
+      "type": "object",
+      "required": [
+        "accepted_gaps",
+        "gates",
+        "nulls",
+        "out_of_scope",
+        "parse_rate_bp",
+        "sms_unreconciled",
+        "state",
+        "statement_share_bp",
+        "statements",
+        "sum_method"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "ok",
+            "warn"
+          ]
+        },
+        "gates": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Gate"
+          }
+        },
+        "nulls": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "sum_method": {
+          "enum": [
+            "bql",
+            "text"
+          ]
+        },
+        "parse_rate_bp": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "statement_share_bp": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "statements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/StatementLine"
+          }
+        },
+        "sms_unreconciled": {
+          "type": "integer"
+        },
+        "out_of_scope": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Accounts the owner no longer uses: still shown, provisional, and not counted by the statement gates."
+        },
+        "accepted_gaps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AcceptedGap"
+          },
+          "description": "Statement gaps the owner accepted: they warn instead of block."
+        }
+      },
+      "description": "Can I trust this? Counts only."
+    },
+    "InvestSlice": {
+      "type": "object",
+      "required": [
+        "invested",
+        "name",
+        "share_bp",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Figure"
+        },
+        "invested": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "share_bp": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "description": "Value by platform, currency or country. Slices of one kind sum to the total."
+    },
+    "InvestSplit": {
+      "type": "object",
+      "required": [
+        "country",
+        "currency",
+        "platform"
+      ],
+      "properties": {
+        "platform": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestSlice"
+          }
+        },
+        "currency": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestSlice"
+          }
+        },
+        "country": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestSlice"
+          }
+        }
+      }
+    },
+    "GainSince": {
+      "type": "object",
+      "required": [
+        "baseline",
+        "cash",
+        "gain",
+        "gain_pct",
+        "since",
+        "vests"
+      ],
+      "properties": {
+        "since": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "gain": {
+          "$ref": "#/$defs/Figure"
+        },
+        "gain_pct": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "baseline": {
+          "$ref": "#/$defs/Figure"
+        },
+        "cash": {
+          "$ref": "#/$defs/Figure"
+        },
+        "vests": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "description": "Gain counted from when data is reliable, always shown with `since`. Value now, less value at `since`, less net cash and vests after it. RSU vests are separate here and never cash."
+    },
+    "InvestWeek": {
+      "type": "object",
+      "required": [
+        "india",
+        "us",
+        "week"
+      ],
+      "properties": {
+        "week": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "india": {
+          "$ref": "#/$defs/Figure"
+        },
+        "us": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "description": "Net bank money into platforms for one week, Monday-dated. Never includes vests."
+    },
+    "InvestMovement": {
+      "type": "object",
+      "required": [
+        "amount",
+        "date",
+        "key",
+        "market",
+        "platform"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "market": {
+          "enum": [
+            "India",
+            "US"
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "description": "One bank payment to or from a platform. Into the platform is positive."
+    },
+    "InvestVest": {
+      "type": "object",
+      "required": [
+        "date",
+        "instrument",
+        "platform",
+        "units",
+        "value",
+        "value_usd"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "instrument": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/Figure"
+        },
+        "value_usd": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "description": "RSU shares received. Not cash; never part of net_cash_in or movements."
+    },
+    "InvestVests": {
+      "type": "object",
+      "required": [
+        "items",
+        "total"
+      ],
+      "properties": {
+        "total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/InvestVest"
+          }
+        }
+      }
+    },
+    "InvestEvent": {
+      "type": "object",
+      "required": [
+        "date",
+        "instrument",
+        "kind",
+        "label",
+        "market",
+        "source"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "label": {
+          "type": "string"
+        },
+        "market": {
+          "enum": [
+            "India",
+            "US"
+          ]
+        },
+        "kind": {
+          "enum": [
+            "past",
+            "upcoming"
+          ]
+        },
+        "source": {
+          "type": "string"
+        },
+        "instrument": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "description": "A market event. `upcoming` dates are approximate. Text comes from the owner's events file."
+    },
+    "InvestStatus": {
+      "type": "object",
+      "required": [
+        "fx_as_of",
+        "fx_stale",
+        "price_as_of",
+        "stale_prices",
+        "state",
+        "unpriced"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "fresh",
+            "stale",
+            "none"
+          ]
+        },
+        "price_as_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fx_as_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stale_prices": {
+          "type": "integer"
+        },
+        "fx_stale": {
+          "type": "boolean"
+        },
+        "unpriced": {
+          "type": "integer"
+        }
+      },
+      "description": "Whether the card's value is current. `state` is none when nothing is held. Age is in each figure's as_of."
+    },
+    "Absent": {
+      "type": "object",
+      "required": [
+        "code",
+        "path",
+        "reason"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Fixed text, never payload text."
+        }
+      },
+      "description": "Why a field is null. `path` uses [] for every item of a list."
+    },
+    "CashStatus": {
+      "type": "object",
+      "required": [
+        "earned",
+        "kind",
+        "low",
+        "rule",
+        "step",
+        "under_hard",
+        "under_soft"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "sell",
+            "dip",
+            "could",
+            "just",
+            "fits",
+            null
+          ],
+          "description": "First match wins, m the median, h the ±, lo = m - h: sell m < hard; dip m < soft; could lo < hard; just lo < soft; fits otherwise. Null when m is at or above soft and h is unknown."
+        },
+        "step": {
+          "enum": [
+            "r1",
+            "r2",
+            "r3",
+            "n",
+            "g1",
+            "g2"
+          ]
+        },
+        "earned": {
+          "enum": [
+            "g1",
+            "g2",
+            null
+          ],
+          "description": "Green must be earned: fits, and lo beats 10 of the last 12 month-ends; g2 also at least twice the best. Under 12 month-ends, never."
+        },
+        "under_soft": {
+          "type": "integer"
+        },
+        "under_hard": {
+          "type": "integer"
+        },
+        "low": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "rule": {
+          "const": "cushions"
+        }
+      },
+      "description": "The one status rule for cash against the cushions. `Figure.status` is not used on these figures."
+    },
+    "Cushions": {
+      "type": "object",
+      "required": [
+        "hard",
+        "soft",
+        "source"
+      ],
+      "properties": {
+        "soft": {
+          "type": "integer",
+          "description": "Paise."
+        },
+        "hard": {
+          "type": "integer",
+          "description": "Paise."
+        },
+        "source": {
+          "enum": [
+            "rules",
+            "entered"
+          ]
+        }
+      },
+      "description": "The owner's values from plan storage, else status rules."
+    },
+    "SalaryLine": {
+      "type": "object",
+      "required": [
+        "amount",
+        "date",
+        "late"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "late": {
+          "type": "boolean",
+          "description": "Expected before as_of and not seen, so dated today."
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "PayIncluded": {
+      "type": "object",
+      "required": [
+        "amount",
+        "date"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "late": {
+          "type": "boolean"
+        }
+      }
+    },
+    "UsualBand": {
+      "type": "object",
+      "required": [
+        "at_day",
+        "hit_rate_bp",
+        "median",
+        "method",
+        "n",
+        "spread",
+        "step"
+      ],
+      "properties": {
+        "median": {
+          "type": "integer"
+        },
+        "spread": {
+          "type": "integer",
+          "description": "The ±, in paise: the width that holds 8 of each 10 past misses, a rule and not a promise. Unrounded; the app rounds for show."
+        },
+        "n": {
+          "type": "integer"
+        },
+        "hit_rate_bp": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string",
+          "description": "Which width made it. The back-test replaces this named input later."
+        },
+        "at_day": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "step": {
+          "enum": [
+            "r3",
+            "r2",
+            "r1",
+            "n",
+            "g1",
+            "g2",
+            null
+          ],
+          "description": "The ladder against usual: z = (now - median) / ±, and the difference must be at least ₹2,000."
+        }
+      },
+      "description": "Median and ± over the last 12 complete months, at the same point in the month. Null with under 6 months: no number, no colour."
+    },
+    "ReviewPayment": {
+      "type": "object",
+      "required": [
+        "account",
+        "account_kind",
+        "amount",
+        "date",
+        "key",
+        "time"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "IST clock time where an SMS gave one. A statement alone gives a date."
+        },
+        "key": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "account": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account_kind": {
+          "enum": [
+            "bank",
+            "card",
+            "other",
+            null
+          ]
+        }
+      },
+      "description": "A payment as a memory cue, newest first, up to 12."
+    },
+    "PriceRow": {
+      "type": "object",
+      "required": [
+        "amount",
+        "month"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
+    "PaidLine": {
+      "type": "object",
+      "required": [
+        "account",
+        "account_kind",
+        "amount",
+        "brand",
+        "category",
+        "date",
+        "key",
+        "kind",
+        "name"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "kind": {
+          "enum": [
+            "bill",
+            "sip",
+            "card_bill"
+          ]
+        },
+        "account": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account_kind": {
+          "enum": [
+            "bank",
+            "card",
+            "other",
+            null
+          ]
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "A group from the ledger taxonomy with its detail: Food or Food:Groceries. Null only where no ledger account says, such as a plan."
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null while the merchant is unnamed or only suggested: a guess earns no logo."
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "YearlyBill": {
+      "type": "object",
+      "required": [
+        "amount",
+        "name",
+        "ym"
+      ],
+      "properties": {
+        "ym": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "name": {
+          "type": "string"
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "ReturnSince": {
+      "type": "object",
+      "required": [
+        "bp",
+        "from_price_date",
+        "since"
+      ],
+      "properties": {
+        "since": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "from_price_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "bp": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "description": "Price change in the holding's own currency since `since`: always shown with that date. Not a yearly return."
+    },
+    "Buckets": {
+      "type": "object",
+      "required": [
+        "india",
+        "safe",
+        "us"
+      ],
+      "properties": {
+        "india": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "us": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "safe": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "description": "Holdings in paise for Plan. `safe` is null: see `absent`."
+    },
+    "MonthEnd": {
+      "type": "object",
+      "required": [
+        "balance",
+        "month"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "balance": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "MonthSoFar": {
+      "type": "object",
+      "required": [
+        "money_in",
+        "money_out",
+        "start"
+      ],
+      "properties": {
+        "start": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "money_in": {
+          "$ref": "#/$defs/Figure"
+        },
+        "money_out": {
+          "$ref": "#/$defs/Figure"
+        }
+      },
+      "description": "The Line's past row: all bank money this month."
+    },
+    "PlanPaid": {
+      "type": "object",
+      "required": [
+        "amount",
+        "source",
+        "txn",
+        "ym"
+      ],
+      "properties": {
+        "txn": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "ym": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "source": {
+          "enum": [
+            "statement",
+            "sms"
+          ]
+        }
+      }
+    },
+    "Expense": {
+      "type": "object",
+      "required": [
+        "amount",
+        "by",
+        "changed_elsewhere",
+        "date",
+        "flex",
+        "id",
+        "note",
+        "overdue",
+        "paid",
+        "remaining",
+        "rev",
+        "source",
+        "spread",
+        "status",
+        "title",
+        "ym"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "rev": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure"
+        },
+        "ym": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoMonth"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "flex": {
+          "enum": [
+            "fixed",
+            "earlier",
+            "any"
+          ]
+        },
+        "spread": {
+          "type": "integer",
+          "description": "Months, in equal parts."
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "paid",
+            "cancelled"
+          ]
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "paid": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanPaid"
+          }
+        },
+        "remaining": {
+          "type": "integer",
+          "description": "Paise still to come."
+        },
+        "overdue": {
+          "type": "boolean"
+        },
+        "changed_elsewhere": {
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "plan_events",
+            "plans_file"
+          ]
+        }
+      },
+      "description": "A saved big expense, read back from the fold of plan.events.v1. Cancelled ones stay, as history."
+    },
+    "PlanNamed": {
+      "type": "object",
+      "required": [
+        "amount",
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
+    "PlanPart": {
+      "type": "object",
+      "required": [
+        "amount",
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
+    "PlanVest": {
+      "type": "object",
+      "required": [
+        "amount",
+        "date",
+        "instrument",
+        "spread",
+        "ym"
+      ],
+      "properties": {
+        "ym": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "instrument": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "spread": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Not known from any source today."
+        }
+      }
+    },
+    "PlanBill": {
+      "type": "object",
+      "required": [
+        "amount",
+        "name",
+        "ym"
+      ],
+      "properties": {
+        "ym": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "name": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
+    "YearRow": {
+      "type": "object",
+      "required": [
+        "bills",
+        "end",
+        "end_without_plans",
+        "invest",
+        "kind",
+        "low",
+        "month",
+        "open",
+        "outgo",
+        "planned",
+        "salary",
+        "spread",
+        "step",
+        "vests",
+        "vests_in_cash"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "open": {
+          "type": "integer"
+        },
+        "salary": {
+          "type": "integer"
+        },
+        "outgo": {
+          "type": "integer"
+        },
+        "invest": {
+          "type": "integer"
+        },
+        "bills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanNamed"
+          }
+        },
+        "vests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanVest"
+          }
+        },
+        "vests_in_cash": {
+          "type": "integer"
+        },
+        "planned": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanPart"
+          }
+        },
+        "end_without_plans": {
+          "type": "integer"
+        },
+        "end": {
+          "type": "integer"
+        },
+        "spread": {
+          "type": "integer"
+        },
+        "low": {
+          "type": "integer"
+        },
+        "kind": {
+          "enum": [
+            "sell",
+            "dip",
+            "could",
+            "just",
+            "fits",
+            null
+          ]
+        },
+        "step": {
+          "enum": [
+            "r1",
+            "r2",
+            "r3",
+            "n",
+            "g1",
+            "g2",
+            null
+          ]
+        }
+      },
+      "description": "One month, in paise. open + salary + vests_in_cash - outgo - invest - bills - planned = end. Row 0 is Likely left, unrounded, with plans taken off."
+    },
+    "PlanYear": {
+      "type": "object",
+      "required": [
+        "bills",
+        "essentials",
+        "first_outgo",
+        "first_salary",
+        "first_spread",
+        "invest",
+        "invest_source",
+        "open",
+        "outgo",
+        "outgo_method",
+        "outgo_spread",
+        "rows",
+        "sell_vests",
+        "start",
+        "takehome",
+        "vests"
+      ],
+      "properties": {
+        "start": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "open": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "first_salary": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "first_outgo": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "first_spread": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "takehome": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "outgo": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "outgo_spread": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "outgo_method": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "invest": {
+          "type": "integer"
+        },
+        "invest_source": {
+          "enum": [
+            "entered",
+            "measured",
+            null
+          ]
+        },
+        "essentials": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "bills": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanBill"
+          }
+        },
+        "vests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PlanVest"
+          }
+        },
+        "sell_vests": {
+          "type": "boolean"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/YearRow"
+          }
+        },
+        "before_salary": {
+          "$ref": "#/$defs/PlanYearBeforeSalary",
+          "description": "The year again with row 0 as `forecast.before_salary`. Present when that figure is."
+        }
+      },
+      "description": "What the app's Plan engine needs, in paise, and 12 rows worked out from it. `rows` is empty when a needed input is null: see `absent`."
+    },
+    "PlanStore": {
+      "type": "object",
+      "required": [
+        "duplicates",
+        "events",
+        "ignored",
+        "invalid",
+        "torn"
+      ],
+      "properties": {
+        "events": {
+          "type": "integer"
+        },
+        "invalid": {
+          "type": "integer"
+        },
+        "torn": {
+          "type": "integer"
+        },
+        "duplicates": {
+          "type": "integer"
+        },
+        "ignored": {
+          "type": "integer"
+        }
+      }
+    },
+    "PlanSettings": {
+      "type": "object",
+      "required": [
+        "eq",
+        "sell_vests"
+      ],
+      "properties": {
+        "eq": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "sell_vests": {
+          "type": "boolean"
+        }
+      }
+    },
+    "AcceptedGap": {
+      "type": "object",
+      "required": [
+        "account",
+        "covered_to",
+        "resumes"
+      ],
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "covered_to": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "resumes": {
+          "$ref": "#/$defs/IsoDate"
+        }
+      }
+    },
+    "ReportMonth": {
+      "type": "object",
+      "required": [
+        "cash_in",
+        "cash_out",
+        "complete",
+        "income",
+        "invested",
+        "month",
+        "net",
+        "spent"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "income": {
+          "type": "integer"
+        },
+        "spent": {
+          "type": "integer"
+        },
+        "invested": {
+          "type": "integer"
+        },
+        "cash_in": {
+          "type": "integer"
+        },
+        "cash_out": {
+          "type": "integer"
+        },
+        "net": {
+          "type": "integer",
+          "description": "income - spent."
+        },
+        "complete": {
+          "type": "boolean"
+        },
+        "unknown_in": {
+          "type": "integer"
+        }
+      }
+    },
+    "ReportPeriod": {
+      "type": "object",
+      "required": [
+        "complete",
+        "from",
+        "kind",
+        "label",
+        "to"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "fy",
+            "calendar"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "to": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "complete": {
+          "type": "boolean",
+          "description": "False: some of it is not in the data or has not happened. Never show its sum as whole."
+        }
+      }
+    },
+    "AuditLine": {
+      "type": "object",
+      "required": [
+        "account",
+        "amount",
+        "confidence",
+        "date",
+        "key",
+        "kind",
+        "name",
+        "source"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "key": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "income",
+            "spent",
+            "invested"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "account": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "source": {
+          "enum": [
+            "statement",
+            "sms",
+            "splitwise"
+          ]
+        },
+        "confidence": {
+          "enum": [
+            "statement",
+            "provisional",
+            "estimate"
+          ]
+        },
+        "for_month": {
+          "$ref": "#/$defs/IsoMonth"
+        }
+      }
+    },
+    "Audit": {
+      "type": "object",
+      "required": [
+        "lines",
+        "proven_bp",
+        "target_bp"
+      ],
+      "properties": {
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/AuditLine"
+          }
+        },
+        "target_bp": {
+          "type": "integer"
+        },
+        "proven_bp": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Share of these rupees on a statement."
+        }
+      }
+    },
+    "FlatMember": {
+      "type": "object",
+      "required": [
+        "balance",
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer",
+          "description": "Paise. Above zero: is owed."
+        }
+      }
+    },
+    "FlatNet": {
+      "type": "object",
+      "required": [
+        "name",
+        "net"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "net": {
+          "type": "integer"
+        }
+      }
+    },
+    "FlatLine": {
+      "type": "object",
+      "required": [
+        "cost",
+        "date",
+        "nets",
+        "on_statement",
+        "paid_by",
+        "title"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "title": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "integer"
+        },
+        "paid_by": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "nets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FlatNet"
+          }
+        },
+        "on_statement": {
+          "type": "null"
+        }
+      }
+    },
+    "FlatSettle": {
+      "type": "object",
+      "required": [
+        "amount",
+        "from",
+        "to"
+      ],
+      "properties": {
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        }
+      }
+    },
+    "FlatGroup": {
+      "type": "object",
+      "required": [
+        "as_of",
+        "lines",
+        "members",
+        "name",
+        "self",
+        "settle",
+        "total"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "self": {
+          "type": "string"
+        },
+        "as_of": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FlatMember"
+          }
+        },
+        "lines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FlatLine"
+          }
+        },
+        "settle": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FlatSettle"
+          }
+        },
+        "total": {
+          "type": "integer"
+        }
+      }
+    },
+    "Flatmates": {
+      "type": "object",
+      "required": [
+        "confidence",
+        "groups",
+        "source"
+      ],
+      "properties": {
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/FlatGroup"
+          }
+        },
+        "source": {
+          "const": "splitwise"
+        },
+        "confidence": {
+          "const": "estimate"
+        }
+      }
+    },
+    "Reports": {
+      "type": "object",
+      "required": [
+        "audit",
+        "flatmates",
+        "months",
+        "periods",
+        "tax"
+      ],
+      "properties": {
+        "months": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReportMonth"
+          }
+        },
+        "periods": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ReportPeriod"
+          }
+        },
+        "audit": {
+          "$ref": "#/$defs/Audit"
+        },
+        "flatmates": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Flatmates"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tax": {
+          "type": "null",
+          "description": "No source exists: see `absent`."
+        },
+        "unknown_in": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "key",
+              "name",
+              "amount",
+              "source"
+            ],
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/IsoDate"
+              },
+              "key": {
+                "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "amount": {
+                "type": "integer"
+              },
+              "source": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "description": "Months from April of the last financial year. Cash flow and profit and loss sum `months`; Audit lists every line of income, spending and investing."
+    },
+    "SalaryEve": {
+      "type": "object",
+      "required": [
+        "balance",
+        "date",
+        "month"
+      ],
+      "properties": {
+        "month": {
+          "$ref": "#/$defs/IsoMonth"
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "balance": {
+          "$ref": "#/$defs/Figure"
+        }
+      }
+    },
+    "BeforeSalary": {
+      "type": "object",
+      "required": [
+        "basis",
+        "date",
+        "date_reason",
+        "definition",
+        "due",
+        "due_items",
+        "figure",
+        "moved_so_far",
+        "payment_unmatched",
+        "planned_items",
+        "planned_moves",
+        "salary",
+        "status",
+        "unplanned",
+        "usual_spend",
+        "usual_spend_past"
+      ],
+      "properties": {
+        "definition": {
+          "const": "before-salary-v1",
+          "description": "See snapshot-v2.md."
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate",
+          "description": "The figure's day: the day before the next salary, or the month's last day when salary timing is unknown. Never before as_of."
+        },
+        "basis": {
+          "enum": [
+            "salary",
+            "month_end"
+          ]
+        },
+        "date_reason": {
+          "enum": [
+            "no_regular_salary",
+            "salary_overdue",
+            null
+          ],
+          "description": "Why `date` is the month's last day. Null when it follows the salary."
+        },
+        "figure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "cash - due - planned_moves - usual_spend, rounded to the rule's step. No salary is ever in it. Null when history is too short."
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CashStatus"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "salary": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SalaryLine"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The next salary: the Salary row after the figure. Null without a regular salary."
+        },
+        "due": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "due_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "planned_moves": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Repeating transfers to investing dated up to `date`. Known moves only: a one-off is never predicted."
+        },
+        "planned_items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "usual_spend": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Figure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "usual_spend_past": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "moved_so_far": {
+          "$ref": "#/$defs/MovedSoFar"
+        },
+        "unplanned": {
+          "$ref": "#/$defs/UnplannedMoves"
+        },
+        "payment_unmatched": {
+          "$ref": "#/$defs/PaymentUnmatched",
+          "description": "`due` is due_items less this."
+        },
+        "if_salary_late": {
+          "anyOf": [
+            {
+              "type": "object",
+              "required": [
+                "date",
+                "figure"
+              ],
+              "properties": {
+                "date": {
+                  "$ref": "#/$defs/IsoDate"
+                },
+                "figure": {
+                  "type": "integer"
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "range": {
+          "$ref": "#/$defs/UsualRange",
+          "description": "How the range on `figure` is made, and how often it has held. Absent with no figure."
+        }
+      }
+    },
+    "MovedSoFar": {
+      "type": "object",
+      "required": [
+        "count",
+        "total"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        }
+      },
+      "description": "Paid to investing this month so far. Already out of cash, so already in the figure."
+    },
+    "UnplannedMoves": {
+      "type": "object",
+      "required": [
+        "largest",
+        "months",
+        "months_with",
+        "total",
+        "typical"
+      ],
+      "properties": {
+        "months": {
+          "type": "integer"
+        },
+        "months_with": {
+          "type": "integer"
+        },
+        "typical": {
+          "type": "integer"
+        },
+        "largest": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        }
+      },
+      "description": "Transfers to investing no repeating payment explains, over the last 12 covered months. NOT in the figure or its ±: any that happens lowers the real balance by that amount. Must be shown beside the figure when months_with is above 0."
+    },
+    "PlanYearBeforeSalary": {
+      "type": "object",
+      "required": [
+        "date",
+        "first_invest",
+        "first_outgo",
+        "first_salary",
+        "first_spread",
+        "rows"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "first_salary": {
+          "type": "integer"
+        },
+        "first_outgo": {
+          "type": "integer"
+        },
+        "first_invest": {
+          "type": "integer"
+        },
+        "first_spread": {
+          "type": "integer"
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/YearRow"
+          }
+        }
+      }
+    },
+    "PaymentUnmatched": {
+      "type": "object",
+      "required": [
+        "count",
+        "total"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "count": {
+          "type": "integer"
+        }
+      },
+      "description": "Bank debits classed as card payments that could name no card: part or round payments, or equal bills on two cards. Off the total once. Show as a line: \"payment not yet matched to a card\"."
+    },
+    "ShortfallFail": {
+      "type": "object",
+      "required": [
+        "date",
+        "name",
+        "amount",
+        "short"
+      ],
+      "properties": {
+        "date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "name": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "integer"
+        },
+        "short": {
+          "type": "integer"
+        }
+      }
+    },
+    "Shortfall": {
+      "type": "object",
+      "description": "Out of money, on the known schedule: snapshot-v2.md. Null with too little history to know a schedule.",
+      "required": [
+        "definition",
+        "active",
+        "until",
+        "below_zero",
+        "below_hard",
+        "first_fail",
+        "fails",
+        "needed",
+        "lowest"
+      ],
+      "properties": {
+        "definition": {
+          "enum": [
+            "shortfall-v1"
+          ]
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "until": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "below_zero": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "below_hard": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "first_fail": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ShortfallFail"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fails": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ShortfallFail"
+          }
+        },
+        "needed": {
+          "type": "integer"
+        },
+        "lowest": {
+          "type": "integer"
+        },
+        "holdings_to_sell": {
+          "type": "boolean"
+        }
+      }
+    },
+    "SilentCard": {
+      "type": "object",
+      "required": [
+        "card",
+        "last_statement",
+        "due_date",
+        "unpaid",
+        "estimate"
+      ],
+      "properties": {
+        "card": {
+          "type": "string"
+        },
+        "account": {
+          "type": "string"
+        },
+        "last_statement": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "due_date": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "unpaid": {
+          "type": "integer"
+        },
+        "estimate": {
+          "type": "integer"
+        }
+      }
+    },
+    "RollingUsual": {
+      "type": "object",
+      "required": [
+        "median",
+        "spread",
+        "n",
+        "hit_rate_bp",
+        "method"
+      ],
+      "properties": {
+        "median": {
+          "type": "integer"
+        },
+        "spread": {
+          "type": "integer"
+        },
+        "n": {
+          "type": "integer"
+        },
+        "hit_rate_bp": {
+          "type": "integer"
+        },
+        "method": {
+          "type": "string"
+        }
+      }
+    },
+    "RollingGroup": {
+      "type": "object",
+      "required": [
+        "name",
+        "spent",
+        "usual",
+        "verdict"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "spent": {
+          "$ref": "#/$defs/Figure"
+        },
+        "usual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RollingUsual"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verdict": {
+          "enum": [
+            "normal",
+            "above",
+            "below",
+            null
+          ]
+        }
+      }
+    },
+    "TrendMover": {
+      "type": "object",
+      "required": [
+        "group",
+        "change"
+      ],
+      "properties": {
+        "group": {
+          "type": "string"
+        },
+        "change": {
+          "type": "integer",
+          "description": "Paise, signed: up or down from the previous bar."
+        }
+      }
+    },
+    "CurvePoints": {
+      "type": "array",
+      "description": "[day of month, running total in paise], only on days the total changes. Before the first point it is 0.",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "integer"
+        }
+      }
+    },
+    "MonthCurve": {
+      "type": "object",
+      "required": [
+        "group",
+        "now",
+        "past",
+        "median",
+        "median_n"
+      ],
+      "properties": {
+        "group": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null: all spending."
+        },
+        "now": {
+          "$ref": "#/$defs/CurvePoints"
+        },
+        "past": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "month",
+              "points",
+              "total",
+              "one_off"
+            ],
+            "properties": {
+              "month": {
+                "$ref": "#/$defs/IsoMonth"
+              },
+              "points": {
+                "$ref": "#/$defs/CurvePoints"
+              },
+              "total": {
+                "type": "integer"
+              },
+              "one_off": {
+                "type": "integer",
+                "description": "Paise of one-offs inside points and total, and left out of the median."
+              }
+            }
+          }
+        },
+        "median": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CurvePoints"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Median per day of the past months without their one-offs. Null with too few months."
+        },
+        "median_n": {
+          "type": "integer"
+        }
+      }
+    },
+    "MonthCurves": {
+      "type": "object",
+      "description": "Running totals by day of month, for all spending and each group. snapshot-v2.md.",
+      "required": [
+        "definition",
+        "months",
+        "curves"
+      ],
+      "properties": {
+        "definition": {
+          "const": "month-curves-v1"
+        },
+        "months": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/IsoMonth"
+          }
+        },
+        "curves": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MonthCurve"
+          }
+        }
+      }
+    },
+    "Rolling": {
+      "type": "object",
+      "description": "Spend's opening: everyday spending in the running last 30 days against the usual 30 days. snapshot-v2.md.",
+      "required": [
+        "definition",
+        "days",
+        "from",
+        "to",
+        "spent",
+        "usual",
+        "verdict",
+        "without_one_offs",
+        "one_offs",
+        "excluded",
+        "groups",
+        "trend",
+        "provisional_days",
+        "provisional_from",
+        "stale"
+      ],
+      "properties": {
+        "definition": {
+          "enum": [
+            "rolling-30-v1"
+          ]
+        },
+        "days": {
+          "type": "integer"
+        },
+        "from": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "to": {
+          "$ref": "#/$defs/IsoDate"
+        },
+        "spent": {
+          "$ref": "#/$defs/Figure"
+        },
+        "usual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RollingUsual"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "verdict": {
+          "enum": [
+            "normal",
+            "above",
+            "below",
+            null
+          ]
+        },
+        "without_one_offs": {
+          "$ref": "#/$defs/Figure"
+        },
+        "one_offs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Item"
+          }
+        },
+        "excluded": {
+          "type": "object",
+          "required": [
+            "words",
+            "amount"
+          ],
+          "properties": {
+            "words": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "amount": {
+              "$ref": "#/$defs/Figure"
+            }
+          }
+        },
+        "groups": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/RollingGroup"
+          }
+        },
+        "trend": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "date",
+              "spent"
+            ],
+            "properties": {
+              "date": {
+                "$ref": "#/$defs/IsoDate"
+              },
+              "spent": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "mover": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/TrendMover"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "The group that changed this total most from the previous bar drawn. Null on a bar with no total, the first drawn, or when no group changed. Absent on a build from before this field."
+              }
+            }
+          }
+        },
+        "provisional_days": {
+          "type": "integer"
+        },
+        "provisional_from": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/IsoDate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "everyday": {
+          "type": "object",
+          "description": "The same 30 days and the same usual, both without one-offs (`spend_kind`), so the page compares like with like. snapshot-v2.md.",
+          "required": [
+            "spent",
+            "one_off",
+            "usual",
+            "verdict",
+            "groups"
+          ],
+          "properties": {
+            "spent": {
+              "type": "integer"
+            },
+            "one_off": {
+              "type": "integer"
+            },
+            "usual": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/RollingUsual"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "verdict": {
+              "enum": [
+                "normal",
+                "above",
+                "below",
+                null
+              ]
+            },
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "spent",
+                  "verdict"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "spent": {
+                    "type": "integer"
+                  },
+                  "verdict": {
+                    "enum": [
+                      "normal",
+                      "above",
+                      "below",
+                      null
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "FixedCost": {
+      "type": "object",
+      "description": "One payee in the fixed list. Amounts in paise.",
+      "required": [
+        "name",
+        "group",
+        "category",
+        "brand",
+        "merchant_id",
+        "key",
+        "spend_kind_reason",
+        "spend_kind_source",
+        "state",
+        "cadence",
+        "month",
+        "date",
+        "amount",
+        "usual",
+        "share",
+        "usual_day"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "merchant_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "key": {
+          "type": "string",
+          "description": "What a correction names: the merchant's alias key, or this payment."
+        },
+        "spend_kind_reason": {
+          "type": "string",
+          "enum": [
+            "owner",
+            "housing",
+            "fixed_account",
+            "recurs",
+            "varies",
+            "not_regular",
+            "thin_history",
+            "large",
+            "one_off_account"
+          ],
+          "description": "Why, as a code. spend.allocation.reasons has the words."
+        },
+        "spend_kind_source": {
+          "type": "string",
+          "enum": [
+            "rule",
+            "owner"
+          ],
+          "description": "rule: worked out. owner: a correction with spend_kind said so."
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "steady",
+            "changed",
+            "twice",
+            "missing",
+            "due",
+            "new",
+            "stopped",
+            "occasional"
+          ],
+          "description": "changed, twice and missing ask for attention. The rest stay quiet."
+        },
+        "cadence": {
+          "type": "string",
+          "enum": [
+            "monthly",
+            "occasional"
+          ]
+        },
+        "month": {
+          "$ref": "#/$defs/IsoMonth",
+          "description": "The latest month paid: for a rent, the month it is for."
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate",
+          "description": "The newest payment's cash date."
+        },
+        "amount": {
+          "type": "integer",
+          "description": "What that month came to. For a split rent, the owner's share."
+        },
+        "usual": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Median of up to 6 earlier months, leaving out any paid twice. Null with none."
+        },
+        "share": {
+          "type": "boolean",
+          "description": "This is a share of a payment split with others."
+        },
+        "usual_day": {
+          "type": "integer"
+        }
+      }
+    },
+    "SpendAllocation": {
+      "type": "object",
+      "description": "How Spend separates fixed costs, variable spending and large one-offs. snapshot-v2.md.",
+      "required": [
+        "definition",
+        "rule",
+        "reasons",
+        "fixed",
+        "window"
+      ],
+      "properties": {
+        "definition": {
+          "const": "spend-kind-v1"
+        },
+        "rule": {
+          "type": "object",
+          "required": [
+            "recur_months",
+            "of_months",
+            "stable_bp",
+            "one_off_floor",
+            "one_off_bp",
+            "one_off_threshold",
+            "usual_variable"
+          ],
+          "properties": {
+            "recur_months": {
+              "type": "integer"
+            },
+            "of_months": {
+              "type": "integer"
+            },
+            "stable_bp": {
+              "type": "integer"
+            },
+            "one_off_floor": {
+              "type": "integer"
+            },
+            "one_off_bp": {
+              "type": "integer"
+            },
+            "one_off_threshold": {
+              "type": "integer",
+              "description": "The one-off line used in this build, in paise."
+            },
+            "usual_variable": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        "reasons": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "spend_kind_reason code -> its words."
+        },
+        "fixed": {
+          "type": "object",
+          "required": [
+            "monthly",
+            "paid",
+            "usual",
+            "verdict",
+            "rows"
+          ],
+          "properties": {
+            "monthly": {
+              "type": "integer",
+              "description": "This month's fixed costs: paid so far, plus what is still to come at its usual."
+            },
+            "paid": {
+              "type": "integer"
+            },
+            "usual": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "verdict": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "same",
+                "changed",
+                null
+              ],
+              "description": "same: nothing asks for attention. Null: no history to compare with."
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/FixedCost"
+              }
+            }
+          }
+        },
+        "window": {
+          "type": "object",
+          "description": "What the running 30 days held of each kind. everyday is the part inside spend.rolling.spent, and sums to it.",
+          "required": [
+            "from",
+            "to",
+            "fixed",
+            "variable",
+            "one_off",
+            "everyday"
+          ],
+          "properties": {
+            "from": {
+              "$ref": "#/$defs/IsoDate"
+            },
+            "to": {
+              "$ref": "#/$defs/IsoDate"
+            },
+            "fixed": {
+              "type": "integer"
+            },
+            "variable": {
+              "type": "integer"
+            },
+            "one_off": {
+              "type": "integer"
+            },
+            "everyday": {
+              "type": "object",
+              "required": [
+                "fixed",
+                "variable",
+                "one_off"
+              ],
+              "properties": {
+                "fixed": {
+                  "type": "integer"
+                },
+                "variable": {
+                  "type": "integer"
+                },
+                "one_off": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "UsualRange": {
+      "type": "object",
+      "required": [
+        "method",
+        "months",
+        "tested",
+        "held",
+        "held_usual"
+      ],
+      "properties": {
+        "method": {
+          "type": "string",
+          "description": "Names the method, so an old range and a new one cannot be confused."
+        },
+        "months": {
+          "type": "integer",
+          "description": "Past months that set the width."
+        },
+        "tested": {
+          "type": "integer",
+          "description": "Past months each judged by a range made only from the months before it."
+        },
+        "held": {
+          "type": "integer",
+          "description": "Of those, how many real balances landed inside."
+        },
+        "held_usual": {
+          "type": "integer",
+          "description": "The same with moves to investing and one-offs added back: how many usual months landed inside."
+        }
+      },
+      "description": "Measured in every build. The app words its label from these, so a stated hit rate cannot outlive its evidence."
+    },
+    "LikelyBillRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "kind",
+        "basis",
+        "date",
+        "amount",
+        "card",
+        "charges_so_far",
+        "brand"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "card_bill",
+            "card_bill_estimate",
+            "rent",
+            "fixed",
+            "flatmates_back"
+          ]
+        },
+        "basis": {
+          "enum": [
+            "stated",
+            "estimated"
+          ]
+        },
+        "date": {
+          "$ref": "#/$defs/IsoDate",
+          "description": "When it falls due, or for rent and a share back, when it usually moves."
+        },
+        "amount": {
+          "$ref": "#/$defs/Figure",
+          "description": "Out of the bank. A share coming back is negative."
+        },
+        "card": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "charges_so_far": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "A card's charges since its last statement, for an estimated bill."
+        },
+        "brand": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "LikelyBills": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "definition",
+        "start",
+        "end",
+        "salary",
+        "cards_within_days",
+        "rent_within_days",
+        "items",
+        "card_total",
+        "total",
+        "left"
+      ],
+      "properties": {
+        "definition": {
+          "enum": [
+            "after-salary-v1"
+          ]
+        },
+        "start": {
+          "$ref": "#/$defs/IsoDate",
+          "description": "The next salary's day."
+        },
+        "end": {
+          "$ref": "#/$defs/IsoDate",
+          "description": "The day before the salary after it."
+        },
+        "salary": {
+          "type": "integer"
+        },
+        "cards_within_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Three in four card bills left within this many days of salary, in the last 6 pay cycles. Null with too few."
+        },
+        "rent_within_days": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The same for rent."
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/LikelyBillRow"
+          }
+        },
+        "card_total": {
+          "type": "integer",
+          "description": "The card rows alone. Bills reads this."
+        },
+        "total": {
+          "$ref": "#/$defs/Figure"
+        },
+        "left": {
+          "$ref": "#/$defs/Figure",
+          "description": "Likely left, plus the salary, less `total`. No everyday spending after salary is in it."
+        }
+      },
+      "description": "See snapshot-v2.md, Likely bills."
+    }
+  }
+}

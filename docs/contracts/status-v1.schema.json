@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reclaim:status-v1",
+  "title": "Build status",
+  "description": "status.json: how the latest attempt went, written whether or not anything was published. Advisory: the manifest and its hashes decide what is good. Fixed text and counts only. Consumers ignore unknown fields.",
+  "type": "object",
+  "required": ["attempt", "gates", "good_counts", "last_good", "publish_integrity", "reason", "state", "status_version", "warnings"],
+  "properties": {
+    "status_version": {"const": 1},
+    "state": {"enum": ["published", "blocked", "failed"], "description": "blocked: a gate held the numbers back. failed: the build stopped on an internal error. In both, the manifest's numbers are the last good ones."},
+    "attempt": {
+      "type": "object",
+      "required": ["as_of", "code_revision", "rules_version"],
+      "properties": {
+        "as_of": {"$ref": "#/$defs/IsoDate"},
+        "code_revision": {"type": "string"},
+        "rules_version": {"type": ["integer", "null"]},
+        "generated_at": {"type": ["string", "null"], "description": "Optional: when this attempt ran, by the caller's clock. status-sources-v1."}
+      }
+    },
+    "reason": {"type": ["string", "null"], "description": "The one plain line to show when not published."},
+    "gates": {"type": "array", "items": {"$ref": "#/$defs/Gate"}},
+    "warnings": {"type": "integer"},
+    "last_good": {
+      "anyOf": [{"$ref": "#/$defs/LastGood"}, {"type": "null"}],
+      "description": "What the manifest holds. Null when nothing good has been published, or the published files fail their hashes."
+    },
+    "publish_integrity": {"enum": ["ok", "missing", "corrupt"]},
+    "good_counts": {
+      "anyOf": [
+        {
+          "type": "object",
+          "required": ["as_of", "statement_accounts", "txns"],
+          "properties": {
+            "as_of": {"$ref": "#/$defs/IsoDate"},
+            "txns": {"type": "integer"},
+            "statement_accounts": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        {"type": "null"}
+      ]
+    },
+    "gate_detail": {"type": "object", "description": "Which account and month each statement gate is about, including accepted_gaps: statement gaps the owner accepted, which warn instead of block. Masks, dates and counts only."},
+    "invariants": {"type": "object", "description": "Optional, written during the build: status-invariants-v1. Counts, basis points and masks only. Advisory: nothing is held back on it."},
+    "sources": {"type": "object", "description": "Optional: status-sources-v1. How old each source is, and which numbers lean on it."}
+  },
+  "$defs": {
+    "IsoDate": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "Gate": {
+      "type": "object",
+      "required": ["count", "id", "level", "ok", "reason"],
+      "properties": {
+        "id": {"type": "string"},
+        "level": {"enum": ["block", "warn"]},
+        "ok": {"type": "boolean"},
+        "count": {"type": "integer"},
+        "reason": {"type": ["string", "null"]}
+      }
+    },
+    "LastGood": {
+      "type": "object",
+      "required": ["as_of", "code_revision", "generated_at", "generation", "newest_record_at", "rules_version"],
+      "properties": {
+        "generation": {"type": "string"},
+        "as_of": {"$ref": "#/$defs/IsoDate"},
+        "newest_record_at": {"type": ["string", "null"]},
+        "generated_at": {"type": ["string", "null"], "description": "When that build ran. Null until the box passes --generated-at."},
+        "code_revision": {"type": "string"},
+        "rules_version": {"type": ["integer", "null"]}
+      }
+    }
+  }
+}

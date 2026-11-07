@@ -1,0 +1,40 @@
+/* Today, Tight (design/reclaim-current-ui/CHANGELOG.md, the Today entries). Loaded by pages/Today.tsx, after tight.css. */
+
+/* ---- hero (#15, #79): the figure and the calendar of its date ---- */
+.hero .n .st-cal.big{margin-left:.18em}
+
+/* ---- Timeline (#6, #67, #69, #75): rows sized by weight, the same margin right as left ---- */
+.tl>h2 .info-i{margin-left:.2em}
+.tl ol.stops{margin-right:var(--m)}
+.tl ol.stops>li{padding-right:var(--s3);box-sizing:border-box}
+.tl ol.stops>li[data-rh],.tl ol.stops>li[data-rh]>a,.tl ol.stops>li[data-rh]>button,.tl ol.stops>li[data-rh]>.r-inv{min-height:var(--rh);box-sizing:border-box}
+.tl ol.stops .today::before{right:0}
+
+/* ---- the groups (#9, #11, #70, #71): each on its own scale, centre = usual, band = ±1 of its own spread ---- */
+.vz .strip{min-height:0}
+.vz-track{position:relative;display:block;height:22px;margin-top:6px}
+.vz-track::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid color-mix(in srgb,var(--ink) 40%,transparent)}
+.vz-track i{position:absolute}
+.vz-band{top:5px;bottom:5px;left:33.33%;width:33.34%;background:color-mix(in srgb,var(--ink) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 30%,transparent);border-radius:var(--rad-s,4px)}
+.vz-mid{top:2px;bottom:2px;left:50%;border-left:2px solid var(--ink)}
+.vz-now{top:50%;width:14px;height:14px;transform:translate(-50%,-50%) rotate(45deg);background:var(--r3t,var(--r3));box-shadow:0 0 0 2px var(--paper)}
+.vz-now[data-step=r1]{background:var(--r2)}
+.vz-now[data-step^=g]{border-radius:50%;transform:translate(-50%,-50%);background:var(--g2)}
+.vz-ends{display:flex;justify-content:space-between;margin-top:2px;font-size:var(--t-small);line-height:var(--l-small);color:var(--ink3)}
+.vz-say{display:block;margin-top:var(--s1);color:var(--ink2);font-size:var(--t-small)}
+.vz-rest{margin:var(--s3) 0 0;color:var(--ink2)}
+
+/* ---- folded rows with an (i) beside the chevron (#12, #13) ---- */
+.fold{position:relative}
+.fold .frow-m{padding-right:40px}
+.fold-i{position:absolute;top:50%;right:calc(var(--m) + 28px);transform:translateY(-50%);line-height:0}
+.sec .fold-i,dialog .fold-i{right:28px}
+:not(.fold)+.fold.fold{margin-top:var(--s5)}
+.fold>.frow.frow,.fold+.frow.frow{margin-top:0}
+.fold[data-open] .frow-c{transform:rotate(90deg)}
+/* An opened fold: its content sits close under its row. */
+.fold+.sec.sec{padding-top:var(--s2);padding-bottom:var(--s2)}
+.fold+.sec>p:first-child{margin-top:0}
+
+/* Desktop Today keeps its wordmark in the header, as the Tight design draws it, beside the rail's. */
+@media (min-width:1000px){.top.land .brand{display:flex}}

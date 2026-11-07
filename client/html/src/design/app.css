@@ -1,0 +1,226 @@
+/* App-only pieces the mocks drew with inline styles, or never needed. Values come from tokens.css. */
+
+/* Today's strip: the mock set these inline, which a strict CSP forbids in markup */
+.strip-track{position:relative;display:block;height:22px;margin-top:4px;background:linear-gradient(var(--rule),var(--rule)) 0 50%/100% 1px no-repeat}
+.strip-track i{position:absolute;top:50%}
+.strip-track .dot{width:8px;height:8px;border-radius:50%;transform:translate(-50%,-50%);background:var(--t3)}
+.strip-track .now{width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 2px var(--paper)}
+.strip-track .now.dia{width:14px;height:14px;border-radius:0;transform:translate(-50%,-50%) rotate(45deg)}
+
+/* The mock set these inline on individual elements */
+.drill-day{display:inline-flex;align-items:center;min-height:var(--target);min-width:var(--target);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.names-link{display:grid;grid-template-columns:1fr auto;align-items:center;min-height:56px;column-gap:var(--s3)}
+.wrap-first{margin-top:var(--s3)}
+.sec-tight{padding-top:var(--s6)}
+.tbl-after{margin-top:var(--s3)}
+.scroll-min{min-width:520px}
+.label-block{display:block}
+.testing{display:block;padding:0;min-height:var(--target);font:inherit;font-size:var(--t-note);line-height:var(--l-note);color:inherit;background:none;border:0;text-align:left;text-decoration:underline dotted;text-underline-offset:.2em;cursor:pointer}
+.testing-why .tag{margin-right:var(--s1)}
+.pf-b{flex:var(--flex,1) 1 0;min-width:0}
+.pf-b .n{white-space:normal;overflow-wrap:anywhere}
+.close-gap{margin-top:var(--s3)}
+
+/* Failed saves stay on screen with a retry. Amber: something only you can do, not a danger */
+.savefail{background:var(--a0);color:var(--ink);padding:var(--s2) var(--s3);border-radius:var(--rad-m);margin:var(--s2) 0;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:var(--s3);min-height:56px}
+.savefail .m{color:var(--a2);margin-right:var(--s1)}
+.savefail button{min-height:var(--target);min-width:var(--target);font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0 var(--s1)}
+.saving{color:var(--ink2);margin-top:var(--s2);font-size:var(--t-small);line-height:var(--l-small)}
+
+/* Global toast outside Plan's page: same look, above the tab bar */
+.updatebar{position:fixed;left:0;right:0;top:0;z-index:20}
+
+/* A plain sentence where a chart would be */
+.noted{color:var(--ink2);padding:0 var(--m)}
+
+/* Plan: a row sits on the tile when a save is on its way */
+.ghost-note{color:var(--ink2);text-align:center}
+
+/* Rows that wrap long names keep their figures aligned, and never push the page wider */
+.rows b,.stops b,.pos b,.choice b,.exp b,.rng b,.strip b,.tm b,.pf-b b,.raw{overflow-wrap:anywhere}
+.rows>li>a,.rows>li>button,.rows>li>.r{min-width:0}
+.icr>b,.icr>small{overflow-wrap:anywhere}
+.tm b,.tm .n{max-width:100%}
+.flagname{overflow-wrap:anywhere}
+
+/* The strip row link and treemap are full-width */
+a.strip{display:block}
+
+/* Flatmates: a sheet stays paper in both themes, including its sub-lines */
+.sheet .note{color:#3D433E}
+.sheet .tbl td{color:#111512}
+.sheet .tbl .n{color:#111512}
+
+/* Report period chips wrap on a phone rather than hiding a choice */
+.rep-note{padding:0 var(--m)}
+.ra[aria-disabled=true]{color:var(--ink3);background:none;box-shadow:inset 0 0 0 1px var(--rule)}
+.ra[aria-disabled=true]::after{display:none}
+button[disabled].act{opacity:.6}
+
+/* Sheets carry long content: the close button must stay reachable */
+dialog .rows b{overflow-wrap:anywhere}
+
+/* Narrowest widths: chips wrap and tiles give way, SPEC section 9 */
+@media (max-width:340px){
+ .stops li{--rw:64px}
+ .pos a,.pos button{grid-template-columns:auto minmax(0,1fr) auto}
+}
+
+/* Saved failures stay on screen, above everything, in memory only */
+.savefail-fixed{position:fixed;left:var(--s2);right:var(--s2);top:var(--s2);margin:0;z-index:30;box-shadow:inset 0 0 0 2px var(--a2)}
+.savefail-acts{display:flex;gap:var(--s1)}
+@media (min-width:1000px){.savefail-fixed{left:calc(var(--rail) + var(--s4));right:auto;width:560px}}
+
+/* Plan: fills the mock set inline */
+.fill-t3{background:var(--t3)}.fill-t2{background:var(--t2)}.fill-ink{background:var(--ink)}.fill-inv{background:var(--inv)}.fill-i4{background:var(--i4)}.fill-i2{background:var(--i2)}
+.add-lede{margin-bottom:var(--s5)}.sheet-chip{margin:var(--s1) 0 var(--s3)}
+.stepper-value{min-height:var(--target);width:100%;border-radius:var(--rad-m);font-weight:500;display:block;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;padding:0 var(--s1)}
+.stepper-input{width:7.5em;min-height:var(--target);font-size:var(--t-row);background:var(--lift);color:var(--ink);border:0;box-shadow:inset 0 0 0 2px var(--ink);border-radius:var(--rad-m);padding:0 var(--s2);text-align:center}
+.stepper-input:focus,.stepper-input:focus-visible{outline:0}
+.foot-fix{margin:0 0 var(--s2);padding:0;background:none}
+
+/* Names: progress turns green with a word beside it */
+.prog i.prog-done{background:var(--g2)}
+
+/* Falling portfolio: the mock only ever showed gains */
+.pf-b[data-s=n]{background:var(--band);color:var(--ink)}
+.pf-b[data-s=g0]{background:var(--g0);color:var(--ink)}
+.pf-b[data-s=r0]{background:var(--r0);color:var(--ink)}
+.pf-b[data-s=r2]{background:var(--r2f);color:var(--r2f-on)}
+.pf-b[data-s=r3]{background:var(--r3);color:var(--r3-on)}
+.hv .down{color:var(--r2);font-weight:600}
+.hv small{display:block}
+
+/* Today: rows without a tap target keep the same grid; a heading that looks like the label */
+.pos .pos-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;min-height:64px;width:100%}
+.lead h1.l{font-weight:400;font-stretch:inherit}
+.say-none{font-size:var(--t-head);line-height:var(--l-head);font-weight:600;font-stretch:var(--w-narrow)}
+/* Today: the per-day line under the hero. Plain ink, never a status colour; inside the red band it takes the band's ink. */
+.lead .say-day{margin-top:var(--s2);font-size:var(--t-body);line-height:var(--l-body);color:var(--ink2);max-width:36em}.lead.r3 .say-day{color:inherit}
+.chores button{display:grid;grid-template-columns:22px 1fr auto;column-gap:var(--s3);align-items:center;min-height:64px;width:100%}
+.stops li>button{text-align:left}
+.top h1.d{font-size:var(--t-title);line-height:var(--l-title);font-weight:500}
+.tiles .sofar{font-weight:400;margin:0}
+.tiles .cell{padding:2px 0}
+
+/* Status chips wrap rather than spill (F8) */
+.chipline .sc,.rows .sc{white-space:normal}
+.sc{min-width:0}
+
+/* Bills: a price row without a link keeps the frozen three columns */
+.rows .r.tri{grid-template-columns:minmax(0,1fr) 96px auto}
+.rows .r.tri .n{text-align:right}
+@media (max-width:340px){.rows .r.tri{grid-template-columns:minmax(0,1fr) auto}.rows .r.tri .micro{display:none}}
+
+/* Larger text: figures drop under names instead of pushing the page wider (F5) */
+.rows>li>a,.rows>li>button,.rows>li>.r{grid-template-columns:minmax(0,1fr) auto}
+.stops li,.stops li>a,.stops li>button{grid-template-columns:minmax(0,1fr) auto}
+.tm button,.pf-b{overflow-wrap:anywhere}
+.tm b,.tm .n,.pf-b b,.pf-b .n{white-space:normal}
+.n{overflow-wrap:normal}
+.statebar>span{min-width:0}
+.sum>span{min-width:0;overflow-wrap:anywhere}
+.tiles{grid-template-columns:repeat(auto-fill,minmax(max(50px,3rem,calc((100% - 15px) / 6 - .01px)),1fr))} /* six across on every phone, the same on Today and Spend. Fewer only when large text needs it. */
+.exp>li>button{grid-template-columns:minmax(0,1fr) auto}
+
+/* Short screens: a browser tab on a phone has less room than the design assumed (F10) */
+@media (max-height:719px){
+ .scr h1{font-size:var(--t-head);line-height:var(--l-head)}
+ .pv h2{margin-top:var(--s1)}
+ .tile{min-height:60px}
+ .months{gap:var(--s1);margin-top:var(--s2)}
+ .choices{position:static;box-shadow:none}
+ .choice-room{height:0}
+}
+
+/* Portfolio map: a block holds its name and figure, so a small holding takes a wider slot rather than clipping (SPEC: about 70 by 76) */
+.pf-r{flex-wrap:wrap;height:auto!important;gap:2px}
+.pf-r.tall .pf-b{min-height:172px}
+.pf-r.short .pf-b{min-height:84px}
+.pf-b{min-width:6.5rem;overflow:visible}
+
+/* Long and unbroken names wrap wherever they must. Figures stay whole */
+td,th,li,p,.sub,.read,.evt,h1,h2,h3,.icb,.chip,.lede,.note{overflow-wrap:anywhere}
+.icb{max-width:100%;min-width:0}
+.icb b,.rng .row>b,.strip .row>b{min-width:0}
+.rng .row,.strip .row{min-width:0}
+.chip{white-space:normal;flex-shrink:1}
+.chips.wrapped .chip{max-width:100%}
+.mx-row>b{max-width:100%}
+
+/* Chips wrap when they must, at any text size (F8) */
+.sc{white-space:normal}
+.exp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--s3);align-items:center;min-height:72px}
+
+/* Long figures and words wrap at 200% text instead of pushing the page sideways (ux-findings-app A7). */
+.pf-val .hl{white-space:normal;overflow-wrap:anywhere}
+.rr .n{white-space:normal;text-align:right;min-width:0}
+.chips.wrapped .chip{white-space:nowrap}
+
+/* The data-age line: one quiet link under the reason strip. */
+.dataline{display:flex;align-items:center;min-height:var(--target);padding:0 var(--m);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.dataline.a{background:var(--a0);color:var(--ink)}.dataline.a .m{color:var(--a2);margin-right:var(--s2);flex:none}
+/* A figure's doubt: the mark shows, the reason is one tap away. */
+.doubt.why summary{display:inline-flex;align-items:center;gap:var(--s2);min-height:var(--target);cursor:pointer;list-style:none;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.doubt.why summary::-webkit-details-marker{display:none}
+.doubt.why summary .tag{margin-right:0}
+@media (min-width:600px) and (max-width:999px){.dataline{max-width:600px;margin:0 auto}}
+@media (min-width:1000px){.dataline{padding:0 var(--s6)}}
+/* A mark and a chip on one row: the chip drops under the mark rather than run beneath the figure. Without the bar there are two columns, or the name takes the bar's auto track. */
+.pos small.chipline{flex-wrap:wrap}
+.pos button:not(.crit),.pos a:not(.crit),.pos .pos-row:not(.crit){grid-template-columns:minmax(0,1fr) auto}
+/* Out of money: the owner's extension of the freeze, SPEC section 3. Text on the critical band, as the band's own label. */
+.lead.r3 .say-on,.lead.r3 .say-on a{color:inherit;margin-top:var(--s2)}.lead.r3 .say-on a{text-decoration:underline}
+
+/* Spend's month answer sits under the rolling one as an h2: same margin as the h1 it replaces. */
+h2.a{letter-spacing:-.008em;padding:0 var(--m) var(--s2)}
+
+/* Spend: fixed costs are a sentence and a list; the map holds variable spending. */
+.fixed .rows{margin-top:var(--s3)}
+.fixed .rows .sc{white-space:nowrap}
+#one-offs .note{margin-top:var(--s3)}
+#adds-up .tbl{margin-top:var(--s2)}
+.sec.adds{padding-top:var(--s2)}
+.sec.adds:empty{display:none}
+
+/* Highlight, SPEC section 3. One yellow element in a chart: a line for today, a cap on a cell. Nothing else changes colour. */
+.cell.now{background-image:linear-gradient(var(--now) 4px,transparent 4px);background-repeat:no-repeat}
+.cell.now .dn{top:6px}.cell.now .m{top:8px}
+.lgd{list-style:none;display:flex;flex-wrap:wrap;gap:var(--s1) var(--s3);padding:0;margin:var(--s2) 0 0;font-size:var(--t-note);line-height:var(--l-note);color:var(--ink2)}
+.lgd li{display:flex;align-items:center;gap:var(--s1)}
+.lgd i{display:block;flex:none;width:16px}
+.lgd .k-avg{height:0;border-top:1.5px dashed var(--ink2)}
+.lgd .k-moved{height:14px;width:12px;border-top:1.5px solid var(--mover);background:linear-gradient(to bottom,transparent,var(--mover))}
+.lgd .k-now{height:0;border-top:2.5px solid var(--ink)}
+.lgd .k-median{height:0;border-top:1.5px dashed var(--ink2)}
+.lgd .k-past{height:0;border-top:1px solid var(--t2)}
+.lgd .k-past.on{border-top:2px solid var(--ink2)}
+.lgd .k-likely{height:10px;background:repeating-linear-gradient(135deg,var(--t2) 0 2px,transparent 2px 5px)}
+.chart text.axis-t{fill:var(--ink3)}
+.chart text.now-t,.yr text.now-t{fill:var(--now-t);font-weight:600}
+.tm button[aria-pressed=true]{outline:0;background-image:linear-gradient(var(--now) 4px,transparent 4px);background-repeat:no-repeat}
+
+/* Status chips sit beside the name. Inline, so a chip follows a wrapped name's last word, and drops whole to the next line when it does not fit. */
+.icr>.nm{grid-column:2;min-width:0}
+.nm b{display:inline}
+.nm .sc{margin-left:var(--s1)}
+.chipline:empty{display:none}
+/* Paid this month: the section says paid, so the chip is only the date, compact, and a long name wraps in its own box with the chip still beside it. */
+.nm.beside{display:flex;align-items:flex-start;gap:var(--s1)}
+.nm.beside b{min-width:0}
+.nm.beside .sc{flex:none;margin-left:0;padding:0 var(--s1);white-space:nowrap}
+.nm.beside .sc .m{display:none}
+@media (max-width:599px){
+ .rows .r.tri{grid-template-columns:minmax(0,1fr) auto;row-gap:var(--s1)}
+ .rows .r.tri>.n{grid-column:2;grid-row:1}
+ .rows .r.tri>.micro{grid-column:1;grid-row:2;padding-left:calc(var(--ic) + var(--s3))}
+}
+
+/* Month grids: every row the same height. This month's "so far" is a ring beside its label, with its words in the cell's name. */
+.tiles,.months{grid-auto-rows:1fr}
+.tiles .sofar{display:inline-block;width:.55em;height:.55em;margin-left:.3em;border:1.5px solid currentColor;border-radius:50%;vertical-align:.1em}
+
+/* The theme button: a 44 px target beside Reports. Its name says the choice and the next one. */
+.top-acts{display:inline-flex;align-items:center}
+.btn-th{display:inline-flex;align-items:center;justify-content:center;width:var(--target);height:var(--target);margin-top:-6px;color:var(--ink)}
+.top.land .btn-th{margin-top:0}

@@ -1,0 +1,124 @@
+/* The Tight redesign's shared rules (design/reclaim-current-ui/CHANGELOG.md). Loaded after app.css. Components are in ui/tight.tsx. */
+
+/* ---- tabs and rail (#32, #72): an outline icon per tab; the current one in a yellow pill, its icon dark in both themes ---- */
+.nav>a{flex-direction:column;gap:3px;min-height:64px}
+.nav a[aria-current]::before{display:none}
+.nav a[aria-current]{color:var(--ink);font-weight:700}
+.tab-ico{display:grid;place-items:center;width:56px;height:30px;border-radius:15px;transition:background .15s}
+.tab-ico svg{display:block;width:22px;height:22px}
+.nav a[aria-current] .tab-ico{background:var(--mark);color:#161917}
+@media (min-width:1000px){
+ .nav>a{flex-direction:row;justify-content:flex-start;gap:12px;min-height:46px;margin:2px 12px;padding-left:10px;border-radius:12px}
+ .nav a[aria-current]{background:var(--mark);color:#161917}
+ .nav a[aria-current] .tab-ico{background:none}
+ .tab-ico{width:auto;height:auto}
+}
+
+/* ---- page titles (#73, #80): bold capitals, open spacing. Today keeps its wordmark. ---- */
+.top>.d:not(:has(.brand)){text-transform:uppercase;letter-spacing:.14em;font-size:calc(var(--t-title) * .82);font-weight:700}
+
+/* ---- the (i) and its sheet (#3, #14, #40) ---- */
+.nw{white-space:nowrap}
+.info-i{display:inline-block;box-sizing:content-box;width:20px;height:20px;padding:6px;margin:-6px -6px -6px 0;vertical-align:middle;position:relative;top:-.1em;line-height:0;border:0;background:none;color:inherit;opacity:.5;cursor:pointer}
+.info-i svg{display:block;width:20px;height:20px}
+dialog.info{padding:0;max-width:560px;border-radius:20px 20px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.25);overscroll-behavior:contain}
+dialog.info::backdrop{background:var(--scrim);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.info-grab{display:block;width:40px;height:4px;border-radius:2px;background:var(--rule);margin:10px auto 0}
+.info-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--s3);padding:var(--s4) var(--m) var(--s2)}
+dialog.info .info-head h2{margin:0;font-size:var(--t-head);line-height:var(--l-head)}
+.info-x{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--press);color:var(--ink);font-size:20px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.info-body{padding:0 var(--m) var(--s6);display:grid;gap:var(--s3);color:var(--ink2);font-size:var(--t-body);line-height:1.5}
+.info-body p{margin:0}
+.info-body .k{color:var(--ink);font-weight:600}
+.info-body dl{display:grid;grid-template-columns:1fr auto;gap:var(--s2) var(--s4);margin:0}
+.info-body dt{margin:0}
+.info-body dd{margin:0;text-align:right;color:var(--ink);font-variant-numeric:tabular-nums}
+@media (min-width:1000px){dialog.info{margin:auto;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.3)}.info-grab{display:none}.info-head{padding-top:var(--s5)}}
+
+/* ---- the stat (#15, #16, #20, #39, #79): figure, calendar, status chip, small tag ---- */
+.stat{display:inline-flex;flex-wrap:wrap;align-items:center;gap:.2em .32em;vertical-align:baseline}
+.stat-v{font-variant-numeric:tabular-nums;white-space:nowrap}
+.st-cal{display:inline-block;width:1.05em;height:1.05em;color:var(--ink2);flex:none}
+.st-cal.big{width:.62em;height:.66em}
+.st-cal svg{display:block;width:100%;height:100%;overflow:visible}
+.stat .sc{font-size:var(--t-small);line-height:var(--l-small);letter-spacing:0;margin-left:.15em;align-self:center}
+.st-tag{font-size:var(--t-small);line-height:var(--l-small);font-weight:500;color:var(--ink2);letter-spacing:0;margin-left:.15em}
+
+/* ---- folded rows (#1, #27, #31): full width, title and chevron; a run of them starts after a section gap ---- */
+.frow{display:flex;box-sizing:border-box;width:calc(100% - 2 * var(--m));margin:0 var(--m);align-items:center;justify-content:space-between;gap:var(--s3);padding:var(--s4) 0;border:0;border-top:1px solid var(--rule);background:none;color:inherit;font:inherit;text-align:left;text-decoration:none;cursor:pointer}
+.sec .frow,dialog .frow{width:100%;margin-left:0;margin-right:0}
+:not(.frow)+.frow{margin-top:var(--s5)}
+.frow-m{display:grid;gap:2px;min-width:0}
+.frow .frow-t{margin:0;padding:0;font-size:var(--t-row);line-height:var(--l-row);font-weight:600;letter-spacing:0}
+.frow-t:has(.stat){display:flex;align-items:center;min-height:1.6em}
+.frow-s{color:var(--ink2);font-size:var(--t-small);line-height:var(--l-small)}
+.frow-c{flex:none;font-size:1.4rem;line-height:1;opacity:.5}
+/* The About this data row: the last thing on every page. */
+.about{margin:var(--s6) 0 var(--s5)}
+@media (min-width:600px) and (max-width:999px){.about{max-width:600px;margin-left:auto;margin-right:auto}}
+@media (min-width:1000px){.about{max-width:var(--page);margin-left:auto;margin-right:auto;padding:0 var(--s6);--m:0px}}
+
+/* ---- range chooser (#43, #50) ---- */
+.range{display:flex;flex-direction:column;gap:var(--s2);margin:var(--s2) var(--m) var(--s4)}
+.sec .range{margin-left:0;margin-right:0}
+.range-step{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--rule);border-radius:999px;padding:4px}
+.range-step button{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:50%;border:0;background:none;color:var(--ink);font-size:20px;cursor:pointer}
+.range-step button:disabled{opacity:.3;cursor:default}
+.range-step b{font-size:var(--t-row);line-height:var(--l-row)}
+.range-seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--press);border-radius:999px;padding:3px}
+.range-seg button{display:flex;align-items:center;justify-content:center;border:0;background:none;border-radius:999px;padding:8px 0;font:inherit;font-size:var(--t-small);font-weight:600;color:var(--ink2);cursor:pointer}
+.range-seg button[aria-pressed=true]{background:var(--lift);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
+/* ---- grid tiles (#52 to #56): treemap blocks and portfolio tiles opt in with .gt. Square, white text, name and amount one size, a ticker pill. ---- */
+:root{--tm-food:#2E7D85;--tm-shop:#5459C2;--tm-home:#8B5A8F;--tm-other:#8F7650}
+[data-theme=dark]{--tm-food:#3A949C;--tm-shop:#6C71D6;--tm-home:#A271A6;--tm-other:#A68C63}
+.gt{display:flex;flex-direction:column;gap:5px;border-radius:0;color:#fff}
+.tm .gt{display:flex}
+.gt.gt[data-g=food]{background:var(--tm-food)}.gt.gt[data-g=shop]{background:var(--tm-shop)}
+.gt.gt[data-g=home]{background:var(--tm-home)}.gt.gt[data-g=other]{background:var(--tm-other)}
+.gt.gt[data-g]{color:#fff;box-shadow:none}
+.gt b{font-size:16px;line-height:1.25;font-weight:600}
+.gt .n{font-size:16px;line-height:1.25;font-weight:700;margin:0}
+.gt small,.gt .ico{color:rgba(255,255,255,.85)}
+.gt .ico,.gt .ico svg{width:24px;height:24px}
+.gt .tk{font-size:12px;line-height:1.3;padding:1px 7px;background:rgba(255,255,255,.18);color:#fff;border-radius:4px;width:max-content}
+.gt-key{display:flex;flex-wrap:wrap;gap:var(--s2) var(--s4);margin-top:var(--s2);font-size:var(--t-small);color:var(--ink2)}
+.gt-key i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:0}
+.gt-key [data-g=food]{background:var(--tm-food)}.gt-key [data-g=shop]{background:var(--tm-shop)}.gt-key [data-g=home]{background:var(--tm-home)}.gt-key [data-g=other]{background:var(--tm-other)}
+
+/* ---- Invest (Tight) (#34 to #41, #56, #57, #74): one left edge, flags, white-text tiles, one rail, holdings as a ruled list ---- */
+.pf-top>*{margin-left:0}
+.pf-val .hl{margin-left:-.1em}
+.pf-gain{gap:.6em}
+.pf-g>span:first-child{display:inline-flex;align-items:center;gap:4px}
+.flag{display:inline-block;flex:none;margin-right:2px;border-radius:2px}
+/* Tiles take white text, so each gain step has a tile colour dark enough for it (4.5:1) in both themes. Stronger is a bigger gain or loss. */
+.pf-b.gt[data-s]{color:#fff}
+.pf-b.gt[data-s=n]{background:#646B66}
+.pf-b.gt[data-s=g0]{background:#3B7D5B}.pf-b.gt[data-s=g1]{background:#2C6B4B}.pf-b.gt[data-s=g2]{background:#1A5A39}.pf-b.gt[data-s=g3]{background:#06401F}
+.pf-b.gt[data-s=r0]{background:#B2483A}.pf-b.gt[data-s=r2]{background:#9B1709}.pf-b.gt[data-s=r3]{background:#6A0F07}
+.pf-b.gt small{margin:0;font-size:var(--t-small)}
+.pf-b.gt .tag{color:#fff;border-color:rgba(255,255,255,.7)}
+.pf-fx{margin-top:var(--s2)}
+.yr-h{display:flex;align-items:center;gap:var(--s2)}
+.yr-h .info-i{margin:0}
+.tk{display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:var(--press);color:var(--ink2);font-size:12px;line-height:1.3;font-weight:600;letter-spacing:.03em;vertical-align:1px;white-space:nowrap}
+.gt .tk{margin-left:0}
+.rows.hold{border-top:1px solid var(--rule)}
+.rows.hold>li{border-bottom:1px solid var(--rule);margin:0;background:none}
+.rows.hold>li>.r{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);padding:12px 0;background:none}
+.rows.hold .hn{display:grid;gap:3px;min-width:0}
+.rows.hold .hn b{display:inline;font-weight:500}
+.rows.hold .hn small{color:var(--ink2)}
+.rows.hold .hv{display:grid;gap:3px;text-align:right}
+#holdings h3.hd{margin-top:var(--s4)}
+
+/* ---- Name payees and Sources (Tight) (#44, #46 to #49): the engine's guess on one quiet line; an outline icon per source kind ---- */
+.queue .likely{margin:var(--s2) 0 0;color:var(--ink2);font-size:var(--t-small);line-height:var(--l-small)}
+.queue .likely b{color:var(--ink);font-weight:600;margin:0 .35em 0 .2em}
+.src-ico{display:grid;place-items:center;color:var(--ink2)}
+.src-ico svg{display:block;width:22px;height:22px}
+/* Name payees' choices float at the foot of the screen: the About row goes above them, the room moves below it. */
+main:has(.choice-room)~.about{margin-bottom:330px}
+main:has(.choice-room):has(~.about) .choice-room{height:0}
+@media (max-height:719px){main:has(.choice-room)~.about{margin-bottom:var(--s5)}}

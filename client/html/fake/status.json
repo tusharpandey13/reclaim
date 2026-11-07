@@ -1,0 +1,907 @@
+{
+ "attempt": {
+  "as_of": "2026-11-18",
+  "code_revision": "fake",
+  "generated_at": null,
+  "rules_version": 2
+ },
+ "gate_detail": {
+  "accepted_gaps": [],
+  "accepted_gaps_unused": [],
+  "balance_gap": [],
+  "balance_gap_old": [],
+  "in_scope_without_statement": [],
+  "out_of_scope": [],
+  "salary": {
+   "absent": [],
+   "first": "2025-10",
+   "multiple": [],
+   "present": 13
+  },
+  "statement_missing": [],
+  "statement_not_yet_due": [
+   {
+    "account": "Assets:Bank:ZedBank:0001",
+    "expected": "2026-12-14"
+   },
+   {
+    "account": "Liabilities:Card:AcmeBank:0002",
+    "expected": "2026-12-08"
+   },
+   {
+    "account": "Liabilities:Card:ZedBank:0003",
+    "expected": "2026-12-08"
+   }
+  ],
+  "statement_overdue": []
+ },
+ "gates": [
+  {
+   "count": 0,
+   "id": "bean_check",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "schema",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_damaged",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "balance_break",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_missing",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "balance_gap",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sum_of_parts",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "provisional_overlap",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "regression",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 1,
+   "id": "sms_unreconciled",
+   "level": "warn",
+   "ok": false,
+   "reason": "Some SMS have no matching statement row, and were left out."
+  },
+  {
+   "count": 0,
+   "id": "clearing_residual",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sms_possible_duplicate",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "fold_spike",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "parse_floor",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_share_floor",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sms_stale",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_stale",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_overdue",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_absent",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "balance_gap_old",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 1,
+   "id": "orphan_corrections",
+   "level": "warn",
+   "ok": false,
+   "reason": "Some of your corrections no longer match a payment."
+  },
+  {
+   "count": 0,
+   "id": "corrections_damaged",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "salary_count",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "future_dated",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_unversioned",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "invest_input_damaged",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "invest_stale",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "holding_unpriced",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "platform_debit_misposted",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "platform_unmapped",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "card_payment_unpaired",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "statement_gap_accepted",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "card_ledger_vs_statement",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "scope_matches_nothing",
+   "level": "block",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "input_set_aside",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "unknown_account",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "rules_missing",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "rule_too_broad",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sms_shape",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sms_rekeyed",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "sms_wording_rise",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "amount_outlier",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "clock_ahead",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  },
+  {
+   "count": 0,
+   "id": "clock_recovered",
+   "level": "warn",
+   "ok": true,
+   "reason": null
+  }
+ ],
+ "good_counts": {
+  "as_of": "2026-11-18",
+  "statement_accounts": [
+   "Assets:Bank:ZedBank:0001",
+   "Liabilities:Card:AcmeBank:0002",
+   "Liabilities:Card:ZedBank:0003"
+  ],
+  "txns": 876
+ },
+ "invariants": {
+  "checks": [
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "open_bill_bank_debit",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "card_ledger_vs_statement",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "block",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": {
+     "Equity:Transfers:Unmatched": 11
+    },
+    "count": 11,
+    "id": "clearing_stranded",
+    "level": "warn",
+    "ok": false,
+    "proposed_level": "warn",
+    "reason": "A transfer has only one side, past the days its other side should take."
+   },
+   {
+    "bp": 837,
+    "by_account": null,
+    "count": 0,
+    "id": "fall_through_share",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": null,
+    "count": 0,
+    "id": "salary_missing",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": 111,
+    "by_account": null,
+    "count": 0,
+    "id": "provisional_share",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "payment_rows_vs_statement",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "card_sms_completeness",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "sender_drift",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": null,
+    "count": 0,
+    "id": "unknown_money_sender",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   },
+   {
+    "bp": null,
+    "by_account": null,
+    "count": 65,
+    "id": "class_changed_on_statement",
+    "level": "warn",
+    "ok": false,
+    "proposed_level": "warn",
+    "reason": "Some payments changed class when their statement arrived, so a month's categories can shift. The ledger marks them."
+   },
+   {
+    "bp": null,
+    "by_account": {},
+    "count": 0,
+    "id": "active_out_of_scope",
+    "level": "warn",
+    "ok": true,
+    "proposed_level": "warn",
+    "reason": null
+   }
+  ],
+  "error": null,
+  "state": "warn",
+  "version": 1
+ },
+ "last_good": {
+  "as_of": "2026-11-18",
+  "code_revision": "fake",
+  "generated_at": null,
+  "generation": "e1da26d132e8",
+  "newest_record_at": "2026-11-18T12:14:00Z",
+  "rules_version": 2
+ },
+ "publish_integrity": "ok",
+ "reason": null,
+ "sources": {
+  "as_of": "2026-11-18",
+  "data_age": {
+   "newest_date": "2026-11-18",
+   "oldest_date": "2026-11-08",
+   "sms_at": "2026-11-18T12:14:00Z"
+  },
+  "expected_absent": [],
+  "numbers": {
+   "cash": {
+    "because": [],
+    "confidence": "firm",
+    "line": null
+   },
+   "due": {
+    "because": [],
+    "confidence": "firm",
+    "line": null
+   },
+   "invest": {
+    "because": [],
+    "confidence": "firm",
+    "line": null
+   },
+   "likely_left": {
+    "because": [],
+    "confidence": "firm",
+    "line": null
+   },
+   "spend": {
+    "because": [],
+    "confidence": "firm",
+    "line": null
+   }
+  },
+  "set_aside": [],
+  "sources": [
+   {
+    "age_days": 0,
+    "connected": true,
+    "detail": {
+     "low_senders": [],
+     "reshaped": 0,
+     "senders": [
+      {
+       "last_date": "2026-11-17",
+       "messages": 16,
+       "rate_bp": 9375,
+       "sender": "ACMEBK",
+       "unknown_wordings": 1
+      },
+      {
+       "last_date": "2026-11-18",
+       "messages": 56,
+       "rate_bp": 10000,
+       "sender": "ZEDBNK",
+       "unknown_wordings": 0
+      }
+     ],
+     "templates": [
+      {
+       "last_date": "2026-10-24",
+       "parsed": 1,
+       "rate_bp": 10000,
+       "template": "ACMEBK.card_payment_received",
+       "unread": 0
+      },
+      {
+       "last_date": "2026-11-17",
+       "parsed": 14,
+       "rate_bp": 10000,
+       "template": "ACMEBK.card_spend",
+       "unread": 0
+      },
+      {
+       "last_date": "2026-11-16",
+       "parsed": 5,
+       "rate_bp": 10000,
+       "template": "ZEDBNK.card_spend",
+       "unread": 0
+      },
+      {
+       "last_date": "2026-10-30",
+       "parsed": 1,
+       "rate_bp": 10000,
+       "template": "ZEDBNK.credit",
+       "unread": 0
+      },
+      {
+       "last_date": "2026-11-18",
+       "parsed": 50,
+       "rate_bp": 10000,
+       "template": "ZEDBNK.debit_merchant",
+       "unread": 0
+      }
+     ],
+     "unknown_wordings": 0,
+     "unknown_wordings_before": 0,
+     "window_days": 30
+    },
+    "feeds": [
+     "cash",
+     "due",
+     "likely_left",
+     "spend"
+    ],
+    "group": "messages",
+    "id": "sms",
+    "label": "Bank SMS",
+    "last_at": "2026-11-18T12:14:00Z",
+    "last_date": "2026-11-18",
+    "line": "Coming in.",
+    "stale_after_days": 2,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": 4,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "cash",
+     "likely_left",
+     "spend"
+    ],
+    "group": "banks",
+    "id": "statement:Assets:Bank:ZedBank:0001",
+    "label": "Zed Bank 0001",
+    "last_at": null,
+    "last_date": "2026-11-14",
+    "line": "Last statement 14 Nov 2026.",
+    "stale_after_days": 40,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": 10,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "due",
+     "likely_left",
+     "spend"
+    ],
+    "group": "cards",
+    "id": "statement:Liabilities:Card:AcmeBank:0002",
+    "label": "Acme Card 0002",
+    "last_at": null,
+    "last_date": "2026-11-08",
+    "line": "Last statement 8 Nov 2026.",
+    "stale_after_days": 40,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": 10,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "due",
+     "likely_left",
+     "spend"
+    ],
+    "group": "cards",
+    "id": "statement:Liabilities:Card:ZedBank:0003",
+    "label": "Zed Card 0003",
+    "last_at": null,
+    "last_date": "2026-11-08",
+    "line": "Last statement 8 Nov 2026.",
+    "stale_after_days": 40,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": null,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "spend"
+    ],
+    "group": "settings",
+    "id": "rules",
+    "label": "Payee rules",
+    "last_at": null,
+    "last_date": null,
+    "line": "22 rules.",
+    "stale_after_days": null,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": 29,
+    "connected": true,
+    "detail": null,
+    "feeds": [],
+    "group": "other",
+    "id": "splitwise",
+    "label": "Splitwise",
+    "last_at": null,
+    "last_date": "2026-10-20",
+    "line": "Last export 20 Oct 2026.",
+    "stale_after_days": 45,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "invest"
+    ],
+    "group": "invest",
+    "id": "vested",
+    "label": "Vested",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Nothing to do unless you want it on Invest: run its export and pass --invest-dir."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "invest"
+    ],
+    "group": "invest",
+    "id": "zerodha",
+    "label": "Zerodha",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Nothing to do unless you want it on Invest: run its export and pass --invest-dir."
+   },
+   {
+    "age_days": 4,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "invest"
+    ],
+    "group": "invest",
+    "id": "prices",
+    "label": "Prices",
+    "last_at": null,
+    "last_date": "2026-11-14",
+    "line": "Prices as of 14 Nov 2026.",
+    "stale_after_days": 14,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": 5,
+    "connected": true,
+    "detail": null,
+    "feeds": [
+     "invest"
+    ],
+    "group": "invest",
+    "id": "fx",
+    "label": "Dollar rate",
+    "last_at": null,
+    "last_date": "2026-11-13",
+    "line": "Rate from 13 Nov 2026.",
+    "stale_after_days": 14,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": null,
+    "connected": true,
+    "detail": null,
+    "feeds": [],
+    "group": "other",
+    "id": "corrections",
+    "label": "Your corrections",
+    "last_at": null,
+    "last_date": null,
+    "line": "Connected.",
+    "stale_after_days": null,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": null,
+    "connected": true,
+    "detail": null,
+    "feeds": [],
+    "group": "other",
+    "id": "plan_events",
+    "label": "Your plans",
+    "last_at": null,
+    "last_date": null,
+    "line": "Connected.",
+    "stale_after_days": null,
+    "state": "ok",
+    "what_to_do": null
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "spend"
+    ],
+    "group": "other",
+    "id": "phonepe",
+    "label": "PhonePe",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Payee names only. Nothing reads it yet."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "due"
+    ],
+    "group": "other",
+    "id": "gmail",
+    "label": "Gmail",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Card statements by email are not read yet, so they come by hand."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "spend"
+    ],
+    "group": "other",
+    "id": "merchant_emails",
+    "label": "Merchant emails",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Nothing reads them yet."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "spend"
+    ],
+    "group": "other",
+    "id": "blinkit",
+    "label": "Blinkit",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Nothing reads its invoices yet."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "spend"
+    ],
+    "group": "other",
+    "id": "zepto",
+    "label": "Zepto",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Nothing reads its invoices yet."
+   },
+   {
+    "age_days": null,
+    "connected": false,
+    "detail": null,
+    "feeds": [
+     "invest"
+    ],
+    "group": "other",
+    "id": "etrade",
+    "label": "E*TRADE",
+    "last_at": null,
+    "last_date": null,
+    "line": "Not connected.",
+    "stale_after_days": null,
+    "state": "not_connected",
+    "what_to_do": "Vests are not read yet, so Plan leaves them out."
+   }
+  ],
+  "version": 1
+ },
+ "state": "published",
+ "status_version": 1,
+ "warnings": 2
+}

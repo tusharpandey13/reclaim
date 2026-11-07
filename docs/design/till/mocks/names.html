@@ -1,0 +1,40 @@
+<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Reclaim: Name payees</title><link rel="stylesheet" href="assets/till.css"></head>
+<body id="names">
+<header class="top"><div class="d">Name payees</div><a class="btn-q" href="spend.html">Done for now</a></header>
+<main>
+<section class="queue" data-state="a">
+ <div class="note">Largest unknown first. These 5 are all of it this month.</div>
+ <div class="prog" role="img" aria-label="20 percent of unknown money named"><i style="width:20%"></i></div>
+ <div class="note"><span class="n">₹1,111</span> of <span class="n">₹5,555</span> named. Goes green when <span class="u-rule">under 5%</span> of the month has no name.</div>
+ <p class="raw"><i class="ico" data-unnamed=""></i>UPI RAVI KU Q1111@ybl</p>
+ <div class="paid n">₹1,111</div>
+ <p class="lede">4 payments since September, <span class="hl">mostly weekday mornings</span></p>
+ <ul class="pay"><li><span>Thu 12 Nov, 8:12 am</span><span class="n">₹333</span></li><li><span>Tue 20 Oct, 8:40 am</span><span class="n">₹222</span></li><li><span>Mon 28 Sep, 8:05 am</span><span class="n">₹333</span></li><li><span>Mon 7 Sep, 9:01 am</span><span class="n">₹223</span></li></ul>
+</section>
+<section class="queue" data-state="b" hidden>
+ <div class="note">Largest unknown first. These 5 are all of it this month.</div>
+ <div class="prog" role="img" aria-label="40 percent of unknown money named"><i style="width:40%"></i></div>
+ <div class="note"><span class="n">₹2,222</span> of <span class="n">₹5,555</span> named. Goes green when <span class="u-rule">under 5%</span> of the month has no name.</div>
+ <div class="done"><span>Named <b>Ravi Stores</b>. All 4 payments moved to Groceries.</span><button data-go="a">Undo</button></div>
+ <p class="raw"><i class="ico" data-unnamed=""></i>PAYTMQR 7777XX ZZ MERCHANT</p>
+ <div class="paid n">₹999</div>
+ <p class="lede">One payment on <span class="hl">Sat 14 Nov, 8:40 pm</span></p>
+</section>
+<div class="choice-room"></div>
+</main>
+<div class="choices" data-state="a">
+ <div class="note">Looks like. Your choice applies to all 4 payments from this ID.</div>
+ <button class="choice" data-go="b"><span class="icr"><i class="ico" data-name="Ravi Stores" data-group="Groceries"></i><b>Ravi Stores</b><small>Groceries, same ID as a named shop nearby</small></span></button>
+ <button class="choice" data-go="b"><span class="icr"><i class="ico" data-name="Ravi Kumar" data-group="Personal"></i><b>Ravi Kumar</b><small>A person, ask me the reason each time</small></span></button>
+ <button class="choice" data-sheet="type"><span><b>Something else</b><small>Type a name or a thing, like milk or auto</small></span></button>
+ <div class="two"><button class="ghost" data-go="b">Skip this one</button><button class="ghost" data-go="b">Not spending</button></div>
+</div>
+<div class="choices" data-state="b" hidden>
+ <div class="note">Looks like</div>
+ <button class="choice" data-go="a"><span class="icr"><i class="ico" data-name="Barbeque Corner" data-group="Food:EatingOut"></i><b>Barbeque Corner</b><small>Going out, Saturday evening and the amount fit</small></span></button>
+ <button class="choice" data-sheet="type"><span><b>Something else</b><small>Type a name or a thing, like milk or auto</small></span></button>
+ <div class="two"><button class="ghost" data-go="a">Skip this one</button><button class="ghost" data-go="a">Not spending</button></div>
+</div>
+<dialog id="type"><h2>What is this?</h2><label style="display:block"><input class="field-plain" aria-label="Name" value="Ravi"></label>
+<ul class="rows"><li><button class="close quiet">Ravi Stores, Groceries</button></li><li><button class="close quiet">Ravi Tailor, Shopping</button></li></ul></dialog>
+<script src="assets/shared.js"></script><script src="assets/icons.js"></script><script src="assets/till.js"></script></body></html>

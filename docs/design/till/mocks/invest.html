@@ -1,0 +1,85 @@
+<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Reclaim: Invest</title><link rel="icon" href="assets/reclaim-icon.svg"><link rel="stylesheet" href="assets/till.css"></head>
+<body data-page="invest">
+<header class="top"><div class="d">Invest</div><a class="btn-q" href="reports.html">Reports</a></header>
+<main class="cols">
+<section class="pf full" aria-labelledby="pf-h">
+<div class="pf-top">
+ <h1 id="pf-h">Your portfolio</h1>
+ <div class="pf-val n"><span class="hl">₹33,33,333</span></div>
+ <div class="pf-gain"><span class="sc g2"><i class="m"></i>Up 28.2%</span><span class="n">+₹7,33,406</span></div>
+ <div class="pf-in">You put in <span class="n">₹25,99,927</span></div>
+</div>
+<div class="pf-map">
+ <div class="pf-g"><span><b>India</b> 72%</span><span><span class="n">₹24,00,009</span>, up 27%</span></div>
+ <div class="pf-r tall">
+  <a class="pf-b" href="#h-safe" data-s="g1" style="flex:900 1 0" aria-label="EPF, PPF, FD, gold, ₹9 L, gain +16%. Go to this holding."><b>EPF, PPF, FD, gold</b><span class="n">₹9 L</span><small><span class="tag">Est</span>+16%</small></a>
+  <a class="pf-b" href="#h-a" data-s="g2" style="flex:889 1 0" aria-label="Index fund A, ₹8.9 L, gain +33%. Go to this holding."><b>Index fund A</b><span class="n">₹8.9 L</span><small>+33%</small></a>
+  <a class="pf-b" href="#h-b" data-s="g2" style="flex:611 1 0" aria-label="Index fund B, ₹6.1 L, gain +38%. Go to this holding."><b>Index fund B</b><span class="n">₹6.1 L</span><small>+38%</small></a>
+ </div>
+ <div class="pf-g"><span><b>US</b> 28%</span><span><span class="n">$11,111</span> = <span class="n">₹9,33,324</span>, up 31%</span></div>
+ <div class="pf-r short">
+  <a class="pf-b" href="#h-e" data-s="g1" style="flex:80 1 0" aria-label="US index ETF, $8,888, gain +20%. Go to this holding."><b>US index ETF</b><span class="n">$8,888</span><small>+20%</small></a>
+  <a class="pf-b" href="#h-s" data-s="g3" style="flex:20 1 0" aria-label="Stock A, $2,223, gain +110%. Go to this holding."><b>Stock A</b><span class="n">$2,223</span><small>+110%</small></a>
+ </div>
+ <p class="pf-fx">Size is money. Stronger green is a bigger gain. Tap a block for that holding. $1 = ₹84, prices and rate from 15 Nov. <button class="tlink" data-sheet="own">How it's counted</button></p>
+</div>
+</section>
+<div>
+<section class="sec" id="year" style="padding-top:var(--s6)"><h2>Your year: <span class="n">₹6,66,666</span> put in, <span class="u-hand">more after the March fall</span></h2>
+<p>India above the line, US below. Stronger weeks put in more. Tap a number for a market event.</p>
+<div class="yr" id="yr" data-open="2" data-events='[{"m": 1, "d": 1, "side": "I", "date": "Sun 1 Feb", "t": "Budget raises tax on derivatives", "x": "Nifty fell 1.96% in a special Sunday session, its worst Budget day since 2020."}, {"m": 1, "d": 28, "side": "U", "date": "Sat 28 Feb", "t": "US strikes on Iran begin the war", "x": "On the next trading day oil rose over 6%, while US stocks closed about flat."}, {"m": 2, "d": 19, "side": "I", "date": "Thu 19 Mar", "t": "Sensex falls 3.26% as oil surges", "x": "The sharpest one-day fall in nearly two years, on the West Asia war and crude."}, {"m": 3, "d": 8, "side": "U", "date": "Wed 8 Apr", "t": "US and Iran agree a two-week ceasefire", "x": "S&P 500 rose 2.51%. Sensex rose about 4% the same day, as oil fell."}, {"m": 3, "d": 15, "side": "U", "date": "Wed 15 Apr", "t": "S&P 500 closes above 7,000 for the first time", "x": "Closed at 7,022.95, recovering the losses since the war began."}, {"m": 9, "d": 7, "side": "I", "date": "Wed 7 Oct", "t": "RBI raises repo rate to 5.50%", "x": "A 0.25 point rise, its first increase since February 2023."}]'></div>
+<div class="evt" id="evt" aria-live="polite"></div>
+<div class="read" id="yrread" hidden></div>
+<div class="up-box" aria-labelledby="up-h">
+ <div class="up-t"><h3 id="up-h">Coming up, rough dates</h3><span class="tag">Sample</span></div>
+ <ul>
+ <li><span class="w">About 20 Nov</span><span><b>US stock A results</b><small>Earnings. You hold this</small></span></li>
+ <li><span class="w">Early Dec</span><span><b>Example Co IPO</b><small>May join Index fund A later</small></span></li>
+ <li><span class="w">Mid Dec</span><span><b>US rate decision</b><small>Moves your US index ETF</small></span></li>
+ </ul>
+ <p class="note">Made-up examples to show the idea. Real dates may be off, so check before acting.</p>
+</div>
+<details class="aslist mt4"><summary>See past events and weeks as list</summary>
+<table class="tbl"><thead><tr><th>Event</th><th>Market</th></tr></thead><tbody>
+<tr><td><b>Sun 1 Feb</b><small>Budget raises tax on derivatives. Nifty −1.96%</small></td><td>India</td></tr>
+<tr><td><b>Tue 3 Feb</b><small>India and US trade deal. Indices about +2.5%</small></td><td>India</td></tr>
+<tr><td><b>Fri 20 Feb</b><small>US Supreme Court strikes down emergency tariffs. S&amp;P 500 +0.7%</small></td><td>US</td></tr>
+<tr><td><b>Sat 28 Feb</b><small>US strikes on Iran begin the war</small></td><td>US</td></tr>
+<tr><td><b>Thu 19 Mar</b><small>Sensex −3.26% as oil surges</small></td><td>India</td></tr>
+<tr><td><b>Wed 8 Apr</b><small>Ceasefire. S&amp;P 500 +2.51%, Sensex about +4%</small></td><td>US</td></tr>
+<tr><td><b>Wed 15 Apr</b><small>S&amp;P 500 first close above 7,000</small></td><td>US</td></tr>
+<tr><td><b>Wed 7 Oct</b><small>RBI raises repo rate to 5.50%</small></td><td>India</td></tr>
+</tbody></table>
+<table class="tbl" style="margin-top:var(--s3)"><thead><tr><th>Largest weeks</th><th class="num">Put in</th></tr></thead><tbody>
+<tr><td><b>Thu 14 May</b><small>Bonus, into index funds</small></td><td class="num n">₹66,666</td></tr><tr><td><b>Mon 23 Mar</b><small>Extra, after the fall</small></td><td class="num n">₹44,444</td></tr><tr><td><b>Fri 10 Apr</b><small>Extra, US</small></td><td class="num n">₹33,333</td></tr></tbody></table></details>
+</section>
+</div>
+<div>
+<section class="sec" id="holdings"><h2>Holdings</h2>
+<p>Gains are in rupees, so they include the exchange rate.</p>
+<h3 class="hd">India</h3>
+<ul class="rows hold">
+<li id="h-a"><div class="r"><span class="icr"><i class="ico" data-name="Index fund A"></i><b>Index fund A</b><small>Put in ₹6,66,666. 11% ±1% a year</small></span><span class="hv"><span class="n">₹8,88,888</span><small class="up">+33%</small></span></div></li>
+<li id="h-b"><div class="r"><span class="icr"><i class="ico" data-name="Index fund B"></i><b>Index fund B</b><small>Put in ₹4,44,444. 13% ±1% a year</small></span><span class="hv"><span class="n">₹6,11,112</span><small class="up">+38%</small></span></div></li>
+<li id="h-safe"><div class="r"><span class="icr"><i class="ico" data-name="EPF, PPF, FDs"></i><b>EPF, PPF, FDs</b><small>Put in ₹7,00,000</small></span><span class="hv"><span class="tag">Est</span><span class="n">₹8,00,009</span><small class="up">+14%</small></span></div></li>
+<li><div class="r"><span class="icr"><i class="ico" data-name="Gold"></i><b>Gold</b><small>Put in ₹77,777</small></span><span class="hv"><span class="tag">Est</span><span class="n">₹1,00,000</span><small class="up">+29%</small></span></div></li>
+</ul>
+<h3 class="hd mt4">US</h3>
+<ul class="rows hold">
+<li id="h-e"><div class="r"><span class="icr"><i class="ico" data-name="US index ETF"></i><b>US index ETF</b><small>Now ₹7,46,592, put in ₹6,22,160. 9% ±1% a year</small></span><span class="hv"><span class="n">$8,888</span><small class="up">+20%</small></span></div></li>
+<li id="h-s"><div class="r"><span class="icr"><i class="ico" data-name="US stock A"></i><b>US stock A</b><small>Now ₹1,86,732, put in ₹88,880. 20% ±2% a year</small></span><span class="hv"><span class="n">$2,223</span><small class="up">+110%</small></span></div></li>
+</ul>
+</section>
+<section class="sec"><h2>Close to your targets, except <span class="u-hand">EPF, PPF and FDs</span></h2>
+<p>The bar is where you are now. The tick is your target.</p>
+<ul class="rows">
+ <li><div class="r"><span class="icr"><i class="ico" data-name="Indian equity"></i><b>Indian equity</b><small class="chipline"><span class="sc g1"><i class="m"></i>On target, 45%</span></small></span><span class="n">₹15,00,000</span></div><div class="tgt"><i style="width:45%"></i><u style="left:45%"></u></div></li>
+ <li><div class="r"><span class="icr"><i class="ico" data-name="US stocks"></i><b>US stocks</b><small>28%, target 25%</small></span><span class="n">₹9,33,324</span></div><div class="tgt"><i style="width:28%"></i><u style="left:25%"></u></div></li>
+ <li><div class="r"><span class="icr"><i class="ico" data-name="EPF, PPF, FDs"></i><b>EPF, PPF, FDs</b><small class="chipline"><span class="sc r2"><i class="m"></i>24%, target 30%</span></small></span><span><span class="tag">Est</span><span class="n">₹8,00,009</span></span></div><div class="tgt"><i style="width:24%"></i><u style="left:30%"></u></div></li>
+ <li><div class="r"><span class="icr"><i class="ico" data-name="Gold"></i><b>Gold</b><small>3%, no target</small></span><span><span class="tag">Est</span><span class="n">₹1,00,000</span></span></div><div class="tgt"><i style="width:3%"></i></div></li>
+</ul>
+</section>
+</div>
+</main>
+<dialog id="own"><h2>How this is counted</h2><div class="sum"><span>Value now</span><span class="n">₹33,33,333</span><span>You put in</span><span class="n">₹25,99,927</span><span class="tot">Gain</span><span class="n tot">+₹7,33,406</span></div><p>US holdings are converted at $1 = ₹84, using prices and the rate from 15 Nov. EPF, PPF, FDs and gold are estimates, so they carry an Est tag.</p><p class="note mt4">Green or red here only says whether you are above or below what you put in. It is not advice to buy or sell.</p><button class="close">Close</button></dialog>
+<script src="assets/shared.js"></script><script src="assets/icons.js"></script><script src="assets/till.js"></script></body></html>

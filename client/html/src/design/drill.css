@@ -1,0 +1,17 @@
+/* The payments behind a figure. Frozen tokens only: rows, icons and chips are the shared ones. */
+.drill-list>li{content-visibility:auto;contain-intrinsic-size:auto 64px;border-bottom:1px solid var(--rule)}
+#drill .drill-list>li>button{padding-left:var(--m);padding-right:var(--m);text-align:left}
+.drill-amt{display:inline-flex;align-items:center;gap:var(--s2);padding-right:var(--s1)}
+.drill-amt .caret{width:8px;height:8px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:translateY(-2px) rotate(45deg);transition:transform var(--d-state) var(--ease)}
+.drill-list [aria-expanded=true] .caret{transform:translateY(2px) rotate(225deg)}
+.pays{list-style:none;padding:0 var(--m) var(--s3) calc(var(--m) + var(--ic) + var(--s3))}
+.pays>li{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:var(--s3);align-items:start;padding:var(--s2) 0}
+.pays>li+li{border-top:1px solid var(--rule)}
+.pays .nm b{font-weight:400}
+.pays small{display:block;color:var(--ink3);margin-top:2px}
+.pays small.bought{color:var(--ink2)}
+.drill-list .more,.pays+.more{margin-left:calc(var(--m) + var(--ic) + var(--s3))}
+#drill .scrtop{margin:0;padding:0 var(--m)}
+#drill .a{margin-top:var(--s2)}
+#drill-answer+.sub{margin-bottom:var(--s3)}
+@media (prefers-reduced-motion:reduce){.drill-amt .caret{transition:none}}

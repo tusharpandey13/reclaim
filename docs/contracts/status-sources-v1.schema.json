@@ -1,0 +1,70 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "reclaim:status-sources-v1",
+ "title": "Source health",
+ "description": "status.json's optional `sources`, written by finance/sources.py during the build. Dates, counts, basis points, masks, sender headers and safe file names only. Consumers ignore unknown fields.",
+ "type": "object",
+ "required": ["as_of", "data_age", "expected_absent", "numbers", "set_aside", "sources", "version"],
+ "properties": {
+  "version": {"const": 1},
+  "as_of": {"$ref": "#/$defs/IsoDate"},
+  "sources": {"type": "array", "items": {"$ref": "#/$defs/Source"}},
+  "numbers": {
+   "type": "object",
+   "required": ["cash", "due", "invest", "likely_left", "spend"],
+   "properties": {
+    "cash": {"$ref": "#/$defs/Number"}, "due": {"$ref": "#/$defs/Number"}, "likely_left": {"$ref": "#/$defs/Number"},
+    "spend": {"$ref": "#/$defs/Number"}, "invest": {"$ref": "#/$defs/Number"}
+   }
+  },
+  "expected_absent": {"type": "array", "items": {"type": "string"}},
+  "set_aside": {"type": "array", "items": {"$ref": "#/$defs/SetAside"}},
+  "data_age": {
+   "type": "object",
+   "required": ["newest_date", "oldest_date", "sms_at"],
+   "properties": {
+    "oldest_date": {"type": ["string", "null"]}, "newest_date": {"type": ["string", "null"]}, "sms_at": {"type": ["string", "null"]}
+   }
+  }
+ },
+ "$defs": {
+  "IsoDate": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+  "Source": {
+   "type": "object",
+   "required": ["age_days", "connected", "detail", "feeds", "group", "id", "label", "last_at", "last_date", "line", "stale_after_days", "state", "what_to_do"],
+   "properties": {
+    "id": {"type": "string"},
+    "group": {"enum": ["messages", "banks", "cards", "invest", "settings", "other"]},
+    "label": {"type": "string"},
+    "state": {"enum": ["ok", "late", "stale", "absent", "not_connected", "problem"]},
+    "connected": {"type": "boolean"},
+    "last_date": {"type": ["string", "null"]},
+    "last_at": {"type": ["string", "null"]},
+    "age_days": {"type": ["integer", "null"]},
+    "stale_after_days": {"type": ["integer", "null"]},
+    "line": {"type": "string"},
+    "what_to_do": {"type": ["string", "null"]},
+    "feeds": {"type": "array", "items": {"type": "string"}},
+    "detail": {"type": ["object", "null"], "description": "On the SMS row: rates over the last 30 days per sender and template, senders under the floor, new wordings against the window before."}
+   }
+  },
+  "Number": {
+   "type": "object",
+   "required": ["because", "confidence", "line"],
+   "properties": {
+    "confidence": {"enum": ["firm", "estimate", "low", "unknown"]},
+    "because": {"type": "array", "items": {"type": "string"}},
+    "line": {"type": ["string", "null"]}
+   }
+  },
+  "SetAside": {
+   "type": "object",
+   "required": ["accounts", "code", "file", "reason", "set_aside", "source", "what_to_do"],
+   "properties": {
+    "source": {"type": "string"}, "file": {"type": "string"}, "code": {"type": "string"},
+    "accounts": {"type": "array", "items": {"type": "string"}},
+    "set_aside": {"type": "boolean"}, "reason": {"type": "string"}, "what_to_do": {"type": "string"}
+   }
+  }
+ }
+}

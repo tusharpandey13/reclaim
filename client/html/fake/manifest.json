@@ -1,0 +1,23 @@
+{
+ "as_of": "2026-11-18",
+ "code_revision": "fake",
+ "files": {
+  "snapshot-v1": {
+   "bytes": 348468,
+   "path": "snapshot-v1.c64a3e6f529e.json",
+   "sha256": "c64a3e6f529e3e4122347b20bcfa169947197f9a6a30cb979bb88d6547e8ab7e"
+  },
+  "snapshot-v2": {
+   "bytes": 803039,
+   "path": "snapshot-v2.ad69cd2cc959.json",
+   "sha256": "ad69cd2cc95919c346610df3f00c97bb4f36a78091fdc932e7b9d1e172439f94"
+  }
+ },
+ "generated_at": null,
+ "generation": "e1da26d132e8",
+ "inputs": "e3837ebd1edabee8",
+ "manifest_version": 1,
+ "newest_record_at": "2026-11-18T12:14:00Z",
+ "rules_version": 2,
+ "snapshot_version": 1
+}

@@ -1,0 +1,238 @@
+{
+ "neutral": "circle-dashed",
+ "brands": {},
+ "groups": {
+  "Housing": "house",
+  "Housing:Rent": "house",
+  "Housing:Utilities": "plug",
+  "Housing:Help": "cooking-pot",
+  "Housing:Supplies": "spray-can",
+  "Food": "utensils",
+  "Food:Groceries": "shopping-basket",
+  "Food:EatingOut": "utensils",
+  "Food:DiningOut": "utensils",
+  "Food:Delivery": "bike",
+  "Food:Coffee": "coffee",
+  "Shopping": "shopping-bag",
+  "Shopping:Clothing": "shirt",
+  "Shopping:Marketplaces": "package",
+  "Shopping:Online": "package",
+  "Travel": "plane",
+  "Travel:Trips": "plane",
+  "Travel:Local": "car-taxi-front",
+  "Travel:Vehicle": "car",
+  "Health": "heart-pulse",
+  "Health:Care": "stethoscope",
+  "Health:Insurance": "shield-plus",
+  "Bills": "receipt-text",
+  "Bills:Phone": "smartphone",
+  "Bills:Subscriptions": "tv",
+  "Bills:Insurance": "shield-check",
+  "Bills:Fees": "percent",
+  "Personal": "user",
+  "Personal:Family": "users",
+  "Personal:Fitness": "dumbbell",
+  "Personal:Fun": "ticket",
+  "Personal:Gifts": "gift",
+  "Personal:Learning": "graduation-cap"
+ },
+ "mock_group_labels": {
+  "Groceries": "Food:Groceries",
+  "Groceries and home": "Food:Groceries",
+  "Going out": "Personal:Fun",
+  "Getting around": "Travel:Local",
+  "Around": "Travel:Local",
+  "Out and about": "Personal:Fun"
+ },
+ "keywords": [
+  [
+   "rent",
+   "house"
+  ],
+  [
+   "maintenance",
+   "wrench"
+  ],
+  [
+   "card",
+   "credit-card"
+  ],
+  [
+   "electricity",
+   "zap"
+  ],
+  [
+   "power",
+   "zap"
+  ],
+  [
+   "internet",
+   "wifi"
+  ],
+  [
+   "broadband",
+   "wifi"
+  ],
+  [
+   "wifi",
+   "wifi"
+  ],
+  [
+   "phone",
+   "smartphone"
+  ],
+  [
+   "mobile",
+   "smartphone"
+  ],
+  [
+   "streaming",
+   "tv"
+  ],
+  [
+   "subscription",
+   "tv"
+  ],
+  [
+   "insurance",
+   "shield-plus"
+  ],
+  [
+   "domain",
+   "cloud"
+  ],
+  [
+   "cloud",
+   "cloud"
+  ],
+  [
+   "gas",
+   "flame"
+  ],
+  [
+   "water",
+   "droplets"
+  ],
+  [
+   "cook",
+   "cooking-pot"
+  ],
+  [
+   "help",
+   "cooking-pot"
+  ],
+  [
+   "groceries",
+   "shopping-basket"
+  ],
+  [
+   "everyday",
+   "wallet"
+  ],
+  [
+   "salary",
+   "banknote"
+  ],
+  [
+   "sip",
+   "sprout"
+  ],
+  [
+   "investments",
+   "sprout"
+  ],
+  [
+   "epf",
+   "landmark"
+  ],
+  [
+   "ppf",
+   "landmark"
+  ],
+  [
+   "fd",
+   "landmark"
+  ],
+  [
+   "fds",
+   "landmark"
+  ],
+  [
+   "gold",
+   "coins"
+  ],
+  [
+   "fund",
+   "chart-line"
+  ],
+  [
+   "etf",
+   "chart-line"
+  ],
+  [
+   "equity",
+   "chart-line"
+  ],
+  [
+   "stock",
+   "chart-candlestick"
+  ],
+  [
+   "stocks",
+   "chart-candlestick"
+  ],
+  [
+   "laptop",
+   "laptop"
+  ],
+  [
+   "trip",
+   "plane"
+  ],
+  [
+   "holiday",
+   "plane"
+  ],
+  [
+   "flight",
+   "plane"
+  ],
+  [
+   "car",
+   "car"
+  ],
+  [
+   "bike",
+   "bike"
+  ],
+  [
+   "wedding",
+   "gift"
+  ],
+  [
+   "household",
+   "users"
+  ],
+  [
+   "job",
+   "briefcase-business"
+  ],
+  [
+   "parents",
+   "users"
+  ]
+ ],
+ "ui": {
+  "have": "landmark",
+  "owe": "credit-card",
+  "own": "layers",
+  "preview": "eye",
+  "download": "download",
+  "share": "share-2",
+  "report_flatmates": "users",
+  "report_cashflow": "arrow-left-right",
+  "report_pnl": "scale",
+  "report_audit": "clipboard-check",
+  "report_tax": "file-text"
+ }
+}

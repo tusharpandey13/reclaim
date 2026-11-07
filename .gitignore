@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vitest/
+test-results/
+playwright-report/
+.DS_Store
+# Real data never belongs in this repo. Only the invented demo in client/html/fake/ is tracked.
+*.beancount
+*.sqlite
+*.jsonl
+.env*

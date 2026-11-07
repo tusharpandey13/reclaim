@@ -1,0 +1,67 @@
+/* Reclaim tokens: the one source. Till pages load this through till.css; the Plan build inlines it.
+   Change a value here and nowhere else. Role names, values per theme. See SPEC.md section 3 and 4. */
+:root{
+ /* type: nine roles, whole pixels */
+ /* rem, so the phone's text size is honoured (UX finding F5). At the default 16px root these are the frozen whole pixels. */
+ --t-note:.875rem;--l-note:1.125rem; --t-small:.9375rem;--l-small:1.25rem; --t-body:1.0625rem;--l-body:1.5rem; --t-row:1.125rem;--l-row:1.5rem;
+ --t-head:1.5rem;--l-head:1.875rem; --t-title:2rem;--l-title:2.25rem; --t-answer:2.25rem;--l-answer:2.5rem; --t-stat:2.75rem;--l-stat:3rem;
+ --t-hero:clamp(3rem,18.5vw,4.75rem);
+ /* the one exception to the scale: the owner's wordmark on Today */
+ --t-brand:2.625rem;--l-brand:3rem;
+ /* width axis */
+ --w-text:84%;--w-narrow:80%;
+ --tr-note:.012em;--tr-small:.006em;
+ /* space */
+ --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;--m:20px;--rw:84px;--ic:22px;--ic-s:18px;
+ /* radius: tags, controls and tiles, sheets, pills. Data blocks stay square */
+ --rad-s:4px;--rad-m:8px;--rad-l:16px;--rad-f:999px;
+ /* motion: state only */
+ --d-press:90ms;--d-state:160ms;--d-move:220ms;--ease:cubic-bezier(.2,0,0,1);
+ /* size */
+ --target:48px;--rail:190px;--col:760px;--page:1320px;--area:1}
+:root,[data-theme=light]{color-scheme:light;
+ --paper:#EEEFEA;--band:#E5E7E0;--lift:#F8F9F5;
+ --ink:#111512;--ink2:#3D433E;--ink3:#535A54;--rule:#A8ADA5;
+ /* red. 0, 1: pale fills only. 2: text and marks. 2f: medium fill. 3: deep fill. 3t: text and marks on the deep step */
+ --r0:#F9E1DC;--r1:#D85F4F;--r2:#BF1D0E;--r2f:#BF1D0E;--r3:#7F1209;--r3t:#7F1209;--r1-on:#111512;--r2f-on:#FFFFFF;--r3-on:#FFFFFF;
+ /* green. 0, 1: pale fills only. 2: text and marks. 2f: fill. 3: deep */
+ --g0:#D6ECDD;--g1:#4F9370;--g2:#0B6B3A;--g2f:#0B6B3A;--g3:#06401F;--g1-on:#111512;--g2-on:#FFFFFF;--g3-on:#FFFFFF;
+ /* ink tints: amount only, no judgement */
+ --t1:#D5D8D1;--t2:#A3A8A0;--t3:#6A706A;--t4:#2B302C;--t3-on:#FFFFFF;--t4-on:#FFFFFF;
+ /* investing: size only, never a state */
+ --i1:#C9CFF0;--i2:#7381D6;--i3:#4A5BBE;--i4:#27317A;--i2-on:#111512;--i3-on:#FFFFFF;--i4-on:#FFFFFF;--inv:#4A5BBE;
+ /* attention: something only you can do, not a danger */
+ --a0:#F5E6BE;--a2:#7A5200;
+ /* a spending group's identity in a chart: never a state, and clear of red, green, indigo, the timeline's blue and yellow. Validated in each theme, every pair. */
+ --mover:#9030A4;
+ /* highlight: the one active element in a chart. Marker yellow; light theme darkens it so a thin line holds on paper and white. See SPEC.md section 3 */
+ --now:#9E8600;--now-t:var(--ink);
+ --scrim:rgba(17,21,18,.45);
+ /* state layer: over paper-coloured things, and over ink or status fills */
+ --press:rgba(17,21,18,.10);--press-on:rgba(238,239,234,.20);
+ /* emphasis. Marker: "look here", never a status. Dark keeps the marker lit and turns the text dark, so it cannot be mistaken for the dim amber chip. See SPEC.md section 4 */
+ --mark:#FFE347;--mark-on:#111512;--mark-img:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath fill='%23FFE347' d='M3 6C40 2 88 6 130 3S186 2 198 5L200 13L196 21L199 30L195 37C150 39 108 34 70 37S16 39 5 36L1 28L4 18Z'/%3E%3Cpath fill='%23FFD626' d='M6 27C60 24 128 31 195 26L194 36C146 38 106 33 70 36S18 38 7 35Z'/%3E%3C/svg%3E");
+ --hand-ink:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%23111512' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E");--hand-bad:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%23BF1D0E' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E");--hand-good:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%230B6B3A' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E")}
+[data-theme=dark]{color-scheme:dark;
+ --paper:#161917;--band:#1E221E;--lift:#262B26;
+ --ink:#F0F2EC;--ink2:#C3C8C0;--ink3:#A1A79F;--rule:#4E544D;
+ --r0:#3A1D19;--r1:#A94438;--r2:#F4604E;--r2f:#8F3B30;--r3:#C8261B;--r3t:#FF7F6E;--r1-on:#FFFFFF;--r2f-on:#FFFFFF;--r3-on:#FFFFFF;
+ --g0:#173326;--g1:#26805A;--g2:#5ADBA0;--g2f:#48A97B;--g3:#C8FAE0;--g1-on:#FFFFFF;--g2-on:#06180F;--g3-on:#06180F;
+ --t1:#2C312C;--t2:#5A605A;--t3:#9AA09A;--t4:#E3E6DF;--t3-on:#111512;--t4-on:#111512;
+ --i1:#2A3056;--i2:#5A68C4;--i3:#8E9DF2;--i4:#C4CCFB;--i2-on:#FFFFFF;--i3-on:#0E1230;--i4-on:#0E1230;--inv:#8E9DF2;
+ --a0:#3A2E10;--a2:#E8C26A;
+ --mover:#B565D9;
+ --now:var(--mark);--now-t:var(--mark);
+ --scrim:rgba(0,0,0,.6);
+ --press:rgba(240,242,236,.12);--press-on:rgba(17,21,18,.16);
+ --mark:#EFCF30;--mark-on:#14160F;--mark-img:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath fill='%23EFCF30' d='M3 6C40 2 88 6 130 3S186 2 198 5L200 13L196 21L199 30L195 37C150 39 108 34 70 37S16 39 5 36L1 28L4 18Z'/%3E%3Cpath fill='%23DDBB1C' d='M6 27C60 24 128 31 195 26L194 36C146 38 106 33 70 36S18 38 7 35Z'/%3E%3C/svg%3E");
+ --hand-ink:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%23F0F2EC' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E");--hand-bad:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%23F4604E' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E");--hand-good:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' viewBox='0 0 120 10'%3E%3Cpath fill='none' stroke='%235ADBA0' stroke-width='2.2' stroke-linecap='round' d='M0 6C8 2.5 16 8.5 28 5S46 2.5 60 6S80 9 94 4.5S112 7.5 120 6'/%3E%3C/svg%3E")}
+/* The Line's panel: white on a light page, lifted on a dark page. Colour jobs: see SPEC.md section 3, The Line's panel. */
+.tl{--paper:#FFFFFF;--band:#EFF1EA;--lift:#FFFFFF;--cush-on:#0B2230;--cush-off:#5E2A22;
+ --col-a:#147DA8;--col-b:#2F97B8;--col-past:#B5D6E3;--fill-g0:#A9D5BC;
+ --bite0:#D9EBF2;--bite1:#F7D0C7;--bite2:#EC9E90;--bite3:var(--r1);--bite-inv:var(--i2);--in:var(--g2f)}
+[data-theme=dark] .tl{--paper:#262B26;--band:#333933;--lift:#333933;--cush-on:#0B2230;--cush-off:#F2B6A8;
+ --col-a:#52AEDC;--col-b:#2A80AC;--col-past:#2F4E5C;--fill-r1:#CF5A4C;--fill-r3:#E03A2C;--fill-g1:#2F9A6D;--fill-g0:#1F5A41;
+ --bite0:#25404B;--bite1:#6A352E;--bite2:#9A4A3E;--bite3:#CF5A4C;--bite-inv:var(--i2);--in:var(--g2f)}
+/* The shared report sheet is paper in both themes, so its marker is too. */
+.sheet{--mark:#FFE347;--mark-on:#111512;--mark-img:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath fill='%23FFE347' d='M3 6C40 2 88 6 130 3S186 2 198 5L200 13L196 21L199 30L195 37C150 39 108 34 70 37S16 39 5 36L1 28L4 18Z'/%3E%3Cpath fill='%23FFD626' d='M6 27C60 24 128 31 195 26L194 36C146 38 106 33 70 36S18 38 7 35Z'/%3E%3C/svg%3E")}

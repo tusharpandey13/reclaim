@@ -1,0 +1,28 @@
+<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Runner-up: The Letter</title>
+<style>
+@font-face{font-family:L;src:url(fonts/Literata.woff2);font-weight:400 700}
+@font-face{font-family:L;font-style:italic;src:url(fonts/Literata-Italic.woff2);font-weight:400 700}
+:root{--bg:#F1F0F4;--fg:#22202B;--mute:#5A5668;--acc:#8A2A4A;--tint:#E3E0EA}
+[data-theme=dark]{--bg:#1F1D26;--fg:#ECEAF2;--mute:#B7B3C4;--acc:#F0A0BC;--tint:#2B2835}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--fg);font:400 22px/1.42 L,serif;font-variant-numeric:lining-nums;padding:24px 22px 96px;overflow-x:hidden}
+.d{font-size:15px;color:var(--mute);margin-bottom:22px}
+p{margin-bottom:20px;font-optical-sizing:auto}
+a{color:inherit;text-decoration:underline;text-decoration-color:var(--acc);text-decoration-thickness:2px;text-underline-offset:4px;padding:6px 0}
+a.tap{display:inline-block;min-height:44px;line-height:32px}
+.big{font-size:38px;line-height:1.14;letter-spacing:-.015em;font-weight:500}
+i{font-style:italic}
+.pp{font-size:16px;color:var(--mute);border-top:2px solid var(--fg);padding-top:12px;margin-top:8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--tint);display:grid;grid-template-columns:repeat(3,1fr);font-size:16px}
+.bar a{display:flex;justify-content:center;align-items:center;min-height:60px;text-decoration:none}
+*{-webkit-tap-highlight-color:transparent}a:active,button:active{background-image:linear-gradient(rgba(127,127,127,.2),rgba(127,127,127,.2))}a.tap{min-height:48px}.bar a{min-height:60px}
+</style></head><body>
+<div class="d">Monday morning, 16 November</div>
+<p class="big">You will likely end the month with <i>about ₹30k, give or take ₹5k</i>.</p>
+<p>You have <a class="tap" href="#"><i>₹1,11,111</i> in the bank</a>, owe <a class="tap" href="#">₹44,444 on cards</a> and own <a class="tap" href="#">₹33,33,333</a> in everything else.</p>
+<p>Five payments are still to come. <a class="tap" href="#">The card bill on Wednesday</a> is the big one, <i>about ₹22k</i>, and rent follows on the 25th.</p>
+<p>Spending looks normal, except <a class="tap" href="#">food, which is up by about ₹5k</a>.</p>
+<p class="pp">Three payees still need names. <a class="tap" href="#">Name them</a></p>
+<nav class="bar"><a href="#">Letters</a><a href="#">Ask</a><a href="#">Tables</a></nav>
+<script>document.documentElement.dataset.theme=new URLSearchParams(location.search).get('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')</script>
+</body></html>

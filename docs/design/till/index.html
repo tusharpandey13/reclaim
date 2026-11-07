@@ -1,0 +1,23 @@
+<!doctype html><html lang="en-IN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Reclaim: flip through the mocks</title>
+<style>
+@font-face{font-family:Words;src:url(mocks/fonts/Asap.woff2);font-weight:400 700;font-stretch:75% 100%}
+*{box-sizing:border-box;margin:0}html,body{height:100%}
+body{font:500 15px/1.3 Words,sans-serif;font-stretch:84%;background:#111512;color:#F0F2EC;display:flex;flex-direction:column;overflow:hidden}
+.stage{flex:1;display:flex;justify-content:center;align-items:center;min-height:0;padding:0}
+iframe{border:0;width:100%;height:100%;background:#fff;display:block}
+.bar{display:grid;grid-template-columns:60px 1fr 60px 60px;align-items:center;background:#111512;padding-bottom:env(safe-area-inset-bottom)}
+.bar button,.bar a{min-height:56px;background:none;border:0;color:inherit;font:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.bar .t{text-align:center;padding:4px;display:block;min-height:0}.bar .t small{display:block;color:#C3C8C0;font-size:13px}
+@media (min-width:700px){.stage{padding:16px}iframe{width:390px;height:min(844px,100%);border-radius:18px;box-shadow:0 0 0 8px #2B302C}body.wide iframe{width:min(1280px,100%);height:min(800px,100%);border-radius:4px}}
+</style></head><body>
+<div class="stage"><iframe id="f" title="Mock"></iframe></div>
+<div class="bar"><button id="p" aria-label="Previous">Back</button><div class="t"><span id="n"></span><small id="c"></small></div><button id="d" aria-label="Switch light or dark">Dark</button><button id="x" aria-label="Next">Next</button></div>
+<script>
+const S=[['Today, 16 Nov, near cushion','mocks/home-mid.html'],['Today, 28 Nov, under soft cushion','mocks/home-end.html'],['Today, 28 Nov, under hard cushion','mocks/home-hard.html'],['Today, a comfortable month','mocks/home-safe.html'],['Spend','mocks/spend.html'],['Name payees','mocks/names.html'],['Bills','mocks/bills.html'],['Bills, under soft cushion','mocks/bills-end.html'],['Bills, under hard cushion','mocks/bills-hard.html'],['Invest','mocks/invest.html'],['Reports','mocks/reports.html'],['Flatmates report','mocks/report-flatmates.html'],['Plan','plan2/mocks/plan.html?reset=1'],['State: numbers are old','mocks/home-mid.html?data=stale'],['State: updating','mocks/spend.html?data=loading'],['State: could not update','mocks/bills.html?data=error'],['State: nothing yet','mocks/home-mid.html?data=empty'],['State: Plan, no expenses','plan2/mocks/plan.html?data=empty'],['State: could not load','mocks/invest.html?data=failed'],['Desktop, open on a wide screen','mocks/home-mid.html',1],['Not part of the freeze: The Letter','mocks/alt-letter.html'],['Not part of the freeze: The Month Sheet','mocks/alt-sheet.html'],['Reclaim mark and app icon','mocks/brand.html']];
+let i=Math.max(0,+location.hash.slice(1)||0),t='light';
+function go(){const s=S[i];document.body.classList.toggle('wide',!!s[2]);f.src=s[1]+(s[1].includes('?')?'&':'?')+'theme='+t;n.textContent=s[0];c.textContent=(i+1)+' of '+S.length;d.textContent=t==='light'?'Dark':'Light';location.hash=i}
+const [f,n,c,d]=['f','n','c','d'].map(x=>document.getElementById(x));
+document.getElementById('p').onclick=()=>{i=(i+S.length-1)%S.length;go()};document.getElementById('x').onclick=()=>{i=(i+1)%S.length;go()};d.onclick=()=>{t=t==='light'?'dark':'light';go()};
+addEventListener('keydown',e=>{if(e.key==='ArrowRight')document.getElementById('x').click();if(e.key==='ArrowLeft')document.getElementById('p').click()});
+go();
+</script></body></html>
